@@ -1,0 +1,292 @@
+body {
+  height: 100vh; /* For 100% screen height */
+  width: 100vw; /* For 100% screen width */
+  margin: 10px;
+  padding: 10px;
+  align-content: center;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+}
+#app {
+  width: 100%;
+  height: 100%;
+}
+.App {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: minmax(400px, 450px) minmax(700px, auto);
+  grid-template-rows: 3% 95%;
+  grid-template-areas:
+    "header header"
+    "property-view summary-view";
+  background: #fff;
+}
+.header-container {
+  grid-area: header;
+  margin: 10px;
+  font-size: 30px;
+}
+
+/* --- Property View --- */
+.property-view-container {
+  margin: 5px;
+  grid-area: property-view;
+  display: grid;
+  grid-gap: 5px;
+  grid-template-rows: 75% 25%;
+  grid-template-areas:
+    "instance-view"
+    "event-view";
+}
+.instance-view-container {
+  grid-area: instance-view;
+  display: grid;
+  grid-template-rows: 3% 40% 57%;
+  grid-template-areas:
+    "instance-view-title"
+    "projection-view"
+    "selection-charts-view";
+}
+.projection-view-container {
+  margin: 10px;
+  grid-area: projection-view;
+  display: grid;
+  grid-template-rows: 10% 90%;
+  grid-template-areas:
+    "projection-view-title"
+    lasso-scatterplot-view;
+}
+.lasso path {
+  stroke: rgb(100, 100, 100);
+  stroke-width: 2px;
+}
+.lasso .drawn {
+  fill-opacity: 0.05;
+}
+.lasso .loop_close {
+  fill: none;
+  stroke-dasharray: 2 2;
+}
+.selection-charts-container {
+  grid-area: selection-charts-view;
+  display: grid;
+  grid-gap: 3px;
+  grid-template-rows: 50% 50%;
+  grid-template-areas:
+    "barchart-gender-class"
+    "barchart-age";
+}
+.barchart-gender-class-container {
+  grid-area: barchart-gender-class;
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: 45% auto 45%;
+  grid-template-areas: "barchart-class-label . barchart-gender-label";
+}
+.barchart-class-label-container {
+  grid-area: barchart-class-label;
+  display: grid;
+  grid-template-rows: 15% 85%;
+  grid-template-areas:
+    "class-label"
+    "barchart-class";
+}
+.barchart-class-container {
+  grid-area: barchart-class;
+}
+.barchart-gender-label-container {
+  grid-area: barchart-gender-label;
+  display: grid;
+  grid-template-rows: 15% 85%;
+  grid-template-areas:
+    "gender-label"
+    "barchart-gender";
+}
+.barchart-gender-container {
+  grid-area: barchart-gender;
+  /* border-bottom: solid #aaa 1px; */
+}
+.barchart-age-label-container {
+  grid-area: barchart-age;
+  display: grid;
+  grid-template-rows: 20% 80%;
+  grid-template-areas:
+    "age-label"
+    barchart-age-container;
+}
+.event-view-container {
+  grid-area: event-view;
+  display: grid;
+  grid-template-rows: 15% 80%;
+  grid-template-areas:
+    "event-view-title"
+    "barchart-attn";
+}
+.barchart-attn-container {
+  grid-area: barchart-attn;
+}
+
+/* ---- Summary View --- */
+.summary-view-container {
+  grid-area: summary-view;
+  display: grid;
+  grid-template-rows: 50px auto;
+  grid-template-areas:
+    "summary-view-title"
+    "summaryvis-view";
+}
+.summaryvis-view-container {
+  grid-area: summaryvis-view;
+  margin: 5px;
+  display: grid;
+  grid-template-columns: 1fr 12fr 1fr;
+  grid-template-rows: 50px 1fr 8fr 1fr;
+}
+.matrix-grid-title {
+  position: relative;
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+.feature-number-selector-container {
+  position: relative;
+  top: 5px;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+.matrix-grid-container {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 2;
+  grid-row-end: 5;
+}
+
+/* ---- Sequence View --- */
+.sequence-view-container {
+  width: 100%;
+  height: 100%;
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 4;
+}
+.sequence-view {
+  width: 100%;
+  height: 100%;
+  min-width: 400px;
+  min-height: 300px;
+  margin: auto;
+  position: absolute;
+  animation: slideUp 0.3s ease-in-out;
+  display: grid;
+  grid-template-rows: 60px 90%;
+  grid-template-areas:
+    "sequence-view-header"
+    "sequence-view-body";
+}
+.sequence-view-header {
+  grid-area: sequence-view-header;
+  background: #ddd;
+  color: #888;
+  padding: 1rem;
+  position: relative;
+}
+.sequence-view-title {
+  margin: 0;
+}
+.sequence-view-close {
+  color: #888;
+  text-decoration: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    bottom: -200px;
+  }
+  to {
+    opacity: 1;
+    bottom: 0;
+  }
+}
+.sequence-view-body {
+  grid-area: sequence-view-body;
+  height: 100%;
+  background: rgba(250, 250, 250, 0.95);
+  display: grid;
+  grid-gap: 8px;
+  grid-template-rows: 12% 88%;
+  grid-template-areas:
+    "sequence-operation"
+    "areacharts-view";
+}
+.sequence-operation-container {
+  grid-area: sequence-operation;
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: 33% 33% 33%;
+  /* grid-template-rows: 50% 50%; */
+  grid-template-areas: "cluster-estimation no-cluster noise-reduction ";
+  /* "..."; */
+}
+.no-cluster-slider {
+  grid-area: no-cluster;
+  margin: 20px;
+}
+.no-cluster-discrete-slider-text {
+  color: #666;
+}
+.cluster-estimation-container {
+  grid-area: cluster-estimation;
+  border-color: #666;
+  margin: 20px;
+}
+.noise-reduction-slider {
+  grid-area: noise-reduction;
+  margin: 20px;
+}
+.noise-reduction-slider-text {
+  color: #666;
+}
+/* .time-focus-range-slider {
+  grid-area: time-focus;
+  margin: 30px;
+}
+.time-focus-range-slider-text {
+  color: #666;
+} */
+.areacharts-view-container {
+  position: relative;
+  margin: 10px;
+  grid-area: areacharts-view;
+  display: grid;
+  grid-template-columns: 6% 46% 46%;
+  grid-template-rows: 6% 94%;
+  grid-template-areas: "clusters class0-title class1-title" "clusters class0 class1";
+}
+.class0-title {
+  text-align: center;
+  grid-area: class0-title;
+}
+.class1-title {
+  text-align: center;
+  grid-area: class1-title;
+}
+.clusters-title {
+  grid-area: clusters;
+}
+.class1 {
+  width: 100%;
+  height: 100%;
+  grid-area: class1;
+}
+.class0 {
+  width: 100%;
+  height: 100%;
+  grid-area: class0;
+}

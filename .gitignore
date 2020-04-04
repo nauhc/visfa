@@ -1,0 +1,6 @@
+.DS_Store
+/node_modules/
+backend/data/
+backend/__pycache__/
+backend/rnn/__pycache__/
+backend/norce/__pycache__/
