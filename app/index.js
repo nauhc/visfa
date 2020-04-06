@@ -127,9 +127,9 @@ class App extends Component {
 
     // load attention
     const attnFilename =
-      "checkpoint-20200115-194901-046Epoch-0.96_attentions_noa4vis0.05.csv";
+      "checkpoint-20200404-190935-023Epoch-0.89_attentions_noa4vis.csv";
     requestCSV(
-      "../backend/data/mimic/vis_data/".concat(attnFilename),
+      "../backend/data/oulad/vis_data/".concat(attnFilename),
       (error, response) => {
         if (!error) {
           response.forEach(function(d) {
@@ -490,7 +490,7 @@ class App extends Component {
               </div>
               <div className="barchart-age-label-container">
                 <h3 style={{ color: "#666" }} className="age-label">
-                  Age
+                  Education
                 </h3>
                 <div className="barchart-age-container">
                   <AutoSizer>
@@ -498,7 +498,7 @@ class App extends Component {
                       <InteractiveBarChart
                         width={width}
                         height={height}
-                        data={property.age}
+                        data={property.education}
                         xkey={"x"}
                         barkey={"Inst Cnt"}
                         color={ageColor}

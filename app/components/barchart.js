@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PureComponent } from "react";
 import { render } from "react-dom";
 import {
   BarChart,
@@ -22,12 +23,34 @@ const defaultProps = {
   height: null,
   data: [],
   xkey: null,
+  xLabelRotate: false,
   barkey: null,
   color: "#aaa",
   barWidth: 25,
   logscale: false,
   onSelectName: () => {}
 };
+
+class CustomizedAxisTick extends PureComponent {
+  render() {
+    const { x, y, stroke, payload } = this.props;
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={16}
+          textAnchor="end"
+          fill={color}
+          transform="rotate(-10)"
+        >
+          {payload.value}
+        </text>
+      </g>
+    );
+  }
+}
 
 class InteractiveBarChart extends React.Component {
   constructor() {
@@ -65,6 +88,7 @@ class InteractiveBarChart extends React.Component {
       height,
       data,
       xkey,
+      xLabelRotate,
       barkey,
       logscale,
       color,
@@ -126,7 +150,12 @@ class InteractiveBarChart extends React.Component {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey={xkey} />
+        {xLabelRotate ? (
+          <XAxis dataKey={xkey} tick={<CustomizedAxisTick />} />
+        ) : (
+          <XAxis dataKey={xkey} />
+        )}
+
         {yaxis}
         <Tooltip />
         <Legend />

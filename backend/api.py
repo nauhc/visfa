@@ -5,19 +5,18 @@ from numpy import load
 from torch import from_numpy
 from norce.NoRCE import NoRCE
 from rnn.biLSTM_inference import biLSTM_inference
-from instance_props import generatePropertyData, sampledPropertyData
-from attention import generateAttentionData
+from instance_props import generatePropertyData
 import json
 
 app = Flask(__name__)
 CORS(app)
 
 
-time = '20200115-194901'
-best_epoch = 46
-best_accuracy = 0.96
-filepath = './data/mimic/'
-T = 48
+time = '20200404-190935'
+best_epoch = 23
+best_accuracy = 0.89
+filepath = './data/oulad/'
+T = 180
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -25,28 +24,9 @@ def index():
     return jsonify({'abc': 'ddd', 'bbd': 'ccc'})
 
 
-@app.route("/predict", methods=["GET"])
-def predict():
-    data10 = load(filepath + 'random10_data.npy')
-    labels10 = load(filepath + 'random10_labels.npy')
-    input = from_numpy(data10[0])
-
-    model = biLSTM_inference(filepath, time, best_epoch, best_accuracy)
-    results = model.predict(input)
-
-    arr = []
-    for row in results:
-        arr.append({'1': row[0], '0': row[1]})
-
-    return jsonify(arr)
-
-
 @app.route("/visfa", methods=["POST"])
 def visfa():
     print('\nREST API CALL, visfa\n')
-    featureIdx = 2  # which feature in the feature list (bottom)
-    attnRange = [0.05, 1]  # selected attention range
-
     d = request.get_json()
     # print('\n', d)
 
@@ -55,21 +35,15 @@ def visfa():
     selectedAge = d['selectedAge']
     selectedGender = d['selectedGender']
 
-    # propertyVisData = generatePropertyData(time, best_epoch, best_accuracy)
-    # print('\nDone generating property data.')
-    # return jsonify(propertyVisData)
+    propertyVisData = generatePropertyData(time, best_epoch, best_accuracy)
+    print('\nDone generating property data.')
+    return jsonify(propertyVisData)
 
-    sampledPropertyVisData = sampledPropertyData(
-        time, best_epoch, best_accuracy, 0.05, selectedInstanceId, selectedClass, selectedGender, selectedAge)
-    print('\nDone generating sampled property data.')
-
-    return jsonify(sampledPropertyVisData)
-
-    # attentionData = generateAttentionData(time, best_epoch, best_accuracy)
-    # return jsonify({
-    #     'property': propertyVisData,
-    #     'attention': attentionData
-    # })
+    # sampledPropertyVisData = sampledPropertyData(
+    #     time, best_epoch, best_accuracy, 0.05, selectedInstanceId, selectedClass, selectedGender, selectedAge)
+    # print('\nDone generating sampled property data.')
+    #
+    # return jsonify(sampledPropertyVisData)
 
 
 @app.route("/norce", methods=["POST"])
@@ -109,4 +83,4 @@ def norce():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=True)
