@@ -73,12 +73,6 @@ const handleLoadSequence = (state, { payload }) => {
   };
 };
 
-const handleUpdateSelectedInstanceId = (state, { payload }) => {
-  return {
-    ...state,
-    selectedInstanceId: payload
-  };
-};
 const handleUpdateSelectedClass = (state, { payload }) => {
   return {
     ...state,

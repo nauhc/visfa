@@ -11,10 +11,13 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+# time = '20200404-190935'
+# best_epoch = 23
+# best_accuracy = 0.89
 
-time = '20200404-190935'
+time = '20200409-061253'
 best_epoch = 23
-best_accuracy = 0.89
+best_accuracy = 0.88
 filepath = './data/oulad/'
 T = 180
 

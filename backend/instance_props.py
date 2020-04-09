@@ -88,7 +88,6 @@ def saveStudentPropData(df, dataFN, idFN, propFN):
     info = pd.read_csv(propDataOrgFile)
 
     allIds = np.unique(df['seqId'])
-    # print(allIds.shape)  # (2080,)
 
     # ----  feature attributes for dimension reduction ---------
     seqClassDf = df[['seqId', 'class']].drop_duplicates()
@@ -103,7 +102,9 @@ def saveStudentPropData(df, dataFN, idFN, propFN):
     data_studIds = np.load(idFN)
     # print data_studIds[0:10]
     mat = []
+    return
     for id in allIds.tolist():
+        print(id)
         dataIdx = np.where(data_studIds == id)[0][0]
         mat.append(dataReshape[dataIdx])
     # print('tsne mat shape', np.asarray(mat).shape)  # (2080, 3600)
@@ -155,7 +156,7 @@ def generatePropertyData(time, epoch, accuracy):
     propFN = visFilePath + orgCsvFN.replace('.csv', '_props.csv')
     if not path.exists(propFN):
         print('\n --- property file not found, generating new ---\n')
-        dataFN = './data/oulad/training_data/FFF_2013J_data_180.npy'
+        dataFN = './data/oulad/training_data/FFF_2013J_data.npy'
         idFN = './data/oulad/training_data/FFF_2013J_ids.npy'
         saveStudentPropData(df, dataFN, idFN, propFN)
 
@@ -179,7 +180,11 @@ def generatePropertyData(time, epoch, accuracy):
     return propVisData
 
 
-time = '20200404-190935'
+# time = '20200404-190935'
+# epoch = 23
+# accuracy = 0.89
+
+time = '20200409-061253'
 epoch = 23
-accuracy = 0.89
+accuracy = 0.88
 generatePropertyData(time, epoch, accuracy)
