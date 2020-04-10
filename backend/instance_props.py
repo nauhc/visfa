@@ -17,15 +17,15 @@ def normalize(raw):
 
 def classHistogram(classCol):
 
-    alive = np.count_nonzero(classCol)
+    pas = np.count_nonzero(classCol)
 
     result = [{
-        'x': 'Dead',
-        'Inst Cnt': int((len(classCol) - alive))
+        'x': 'Fail',
+        'Inst Cnt': int((len(classCol) - pas))
     },
         {
-        'x': 'Alive',
-        'Inst Cnt': int(alive)
+        'x': 'Pass',
+        'Inst Cnt': int(pas)
     }]
     return result
 
@@ -147,7 +147,55 @@ def saveStudentPropData(df, dataFN, idFN, propFN):
                     quoting=csv.QUOTE_NONE, encoding='utf-8')
 
 
-def generatePropertyData(time, epoch, accuracy):
+def commonList(a, b):
+    return list(set(a) & set(b))
+
+
+def updatePropertyVisData(df, visDataDict, instanceId, classId, gender, education):
+    selectedInstance = len(instanceId)
+    selectedClass = len(classId)
+    selectedGender = len(gender)
+    selectedEducation = len(education)
+
+    selectedIdx = [*range(len(df))]  # intialize to all
+    if selectedInstance:
+        idxByInstanceId = df[df['id'].isin(instanceId)]['resetIdx'].tolist()
+        selectedIdx = commonList(selectedIdx, idxByInstanceId)
+
+    if selectedGender:
+        idxSelectedByGender = df[df['gender']
+                                 == gender[0]]['resetIdx'].tolist()
+        selectedIdx = commonList(selectedIdx, idxSelectedByGender)
+
+    if selectedClass:
+        idxSelectedByClass = df[df['class'] == (
+            0 if classId[0] == 'Fail' else 1)]['resetIdx'].tolist()
+        selectedIdx = commonList(selectedIdx, idxSelectedByClass)
+
+    if selectedEducation:
+        idxSelectedByEdu = []
+        for edu in education:
+            idxSelectedByEdu += df[(df['highest_education']
+                                    == edu)]['resetIdx'].tolist()
+        selectedIdx = commonList(selectedIdx, idxSelectedByEdu)
+
+    updatedDf = df.loc[df['resetIdx'].isin(selectedIdx)]
+
+    if not selectedClass:  # update class barchart if no class selection
+        visDataDict['class'] = classHistogram(updatedDf['class'])
+    if not selectedGender:  # update gender barchart if no gender selection
+        visDataDict['gender'] = genderHistogram(updatedDf['gender'])
+    if not selectedEducation:  # update age barchart if no age selection
+        visDataDict['education'] = educationHistogram(
+            updatedDf['highest_education'])
+
+    updatedSelection = np.array([False] * len(df))
+    updatedSelection[selectedIdx] = True
+    # update tsne view
+    visDataDict['tsneSelection'] = updatedSelection.tolist()
+
+
+def generatePropertyData(time, epoch, accuracy, instanceId, classId, gender, education):
     orgCsvFN = 'checkpoint-' + time + \
         '-%03dEpoch-%.2f_attentions_noa4vis.csv' % (epoch, accuracy)
     df = pd.read_csv(visFilePath + orgCsvFN)
@@ -162,6 +210,7 @@ def generatePropertyData(time, epoch, accuracy):
 
     # read property file
     propertyDf = pd.read_csv(propFN)
+    propertyDf['resetIdx'] = [*range(len(propertyDf))]
 
     tsneDF = propertyDf[['tsne', 'id', 'class']]
     tsneDF[['x', 'y']] = tsneDF.tsne.str.split(
@@ -169,13 +218,18 @@ def generatePropertyData(time, epoch, accuracy):
     tsneDF = tsneDF.drop(['tsne'], axis=1)
 
     propVisData = {
-        'age': ageHistogram(propertyDf['age']),
         'attention': attentionHistogram(df['attn']),
+        'age': ageHistogram(propertyDf['age']),
         'class': classHistogram(propertyDf['class']),
         'gender': genderHistogram(propertyDf['gender']),
         'education': educationHistogram(propertyDf['highest_education']),
-        'tsne': tsneDF.to_dict('record')
+        'tsne': tsneDF.to_dict('record'),
+        'tsneSelection': [True] * len(propertyDf)
     }
+
+    if(len(instanceId) or len(classId) or len(gender) or len(education)):
+        updatePropertyVisData(propertyDf, propVisData,
+                              instanceId, classId, gender, education)
 
     return propVisData
 
@@ -187,4 +241,4 @@ def generatePropertyData(time, epoch, accuracy):
 time = '20200409-061253'
 epoch = 23
 accuracy = 0.88
-generatePropertyData(time, epoch, accuracy)
+# generatePropertyData(time, epoch, accuracy)

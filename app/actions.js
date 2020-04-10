@@ -8,7 +8,7 @@ export const LOAD_SEQUENCE = "LOAD_SEQUENCE";
 export const UPDATE_LASSO_SELECTED_INSTANCE_ID =
   "UPDATE_LASSO_SELECTED_INSTANCE_ID";
 export const UPDATE_SELECTED_CLASS = "UPDATE_SELECTED_CLASS";
-export const UPDATE_SELECTED_AGE = "UPDATE_SELECTED_AGE";
+export const UPDATE_SELECTED_EDU = "UPDATE_SELECTED_EDU";
 export const UPDATE_SELECTED_GENDER = "UPDATE_SELECTED_GENDER";
 export const UPDATE_SELECTED_FEATURE_IDX = "UPDATE_SELECTED_FEATURE_IDX";
 export const UPDATE_SELECTED_MODEL = "UPDATE_SELECTED_MODEL";
@@ -31,7 +31,7 @@ export const updateLassoSelectedInstanceId = createAction(
   UPDATE_LASSO_SELECTED_INSTANCE_ID
 );
 export const updateSelectedClass = createAction(UPDATE_SELECTED_CLASS);
-export const updateSelectedAge = createAction(UPDATE_SELECTED_AGE);
+export const updateSelectedEdu = createAction(UPDATE_SELECTED_EDU);
 export const updateSelectedGender = createAction(UPDATE_SELECTED_GENDER);
 export const updateSelectedFeatureIdx = createAction(
   UPDATE_SELECTED_FEATURE_IDX

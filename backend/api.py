@@ -35,10 +35,11 @@ def visfa():
 
     selectedInstanceId = d['selectedInstanceId']
     selectedClass = d['selectedClass']
-    selectedAge = d['selectedAge']
     selectedGender = d['selectedGender']
+    selectedEdu = d['selectedEdu']
 
-    propertyVisData = generatePropertyData(time, best_epoch, best_accuracy)
+    propertyVisData = generatePropertyData(
+        time, best_epoch, best_accuracy, selectedInstanceId, selectedClass, selectedGender, selectedEdu)
     print('\nDone generating property data.')
     return jsonify(propertyVisData)
 

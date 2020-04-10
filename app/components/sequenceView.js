@@ -188,13 +188,13 @@ class SequenceView extends React.Component {
               style={{ alignSelf: "center", color: positiveColor }}
               className="class1-title"
             >
-              Alive
+              Pass
             </h3>
             <h3
               style={{ alignSelf: "center", color: negativeColor }}
               className="class0-title"
             >
-              Dead
+              Fail
             </h3>
 
             <div

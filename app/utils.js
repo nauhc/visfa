@@ -261,8 +261,6 @@ export const featuresWeightsNSort = (
     ]);
   });
 
-  // console.log("diagMats", diagMats);
-
   const weightedAttrOpts = features.map((attr, attrIdx) => {
     let arr = [];
     diagMats[attrIdx].forEach(c => {

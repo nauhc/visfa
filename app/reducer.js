@@ -6,7 +6,7 @@ import {
   LOAD_SEQUENCE,
   UPDATE_LASSO_SELECTED_INSTANCE_ID,
   UPDATE_SELECTED_CLASS,
-  UPDATE_SELECTED_AGE,
+  UPDATE_SELECTED_EDU,
   UPDATE_SELECTED_GENDER,
   UPDATE_SELECTED_MODEL,
   UPDATE_SELECTED_EPOCH,
@@ -33,7 +33,7 @@ const DEFAULT_STATE = {
   rankedFeatures: FEATURES,
   selectedInstanceId: [],
   selectedClass: [],
-  selectedAge: [],
+  selectedEdu: [],
   selectedGender: [],
   selectedFeatureIdx: [2],
   selectedModel: null,
@@ -79,10 +79,10 @@ const handleUpdateSelectedClass = (state, { payload }) => {
     selectedClass: payload
   };
 };
-const handleUpdateSelectedAge = (state, { payload }) => {
+const handleUpdateSelectedEdu = (state, { payload }) => {
   return {
     ...state,
-    selectedAge: payload
+    selectedEdu: payload
   };
 };
 const handleUpdateSelectedGender = (state, { payload }) => {
@@ -195,7 +195,7 @@ export default handleActions(
     [LOAD_ATTENTION]: handleLoadAttention,
     [LOAD_SEQUENCE]: handleLoadSequence,
     [UPDATE_SELECTED_CLASS]: handleUpdateSelectedClass,
-    [UPDATE_SELECTED_AGE]: handleUpdateSelectedAge,
+    [UPDATE_SELECTED_EDU]: handleUpdateSelectedEdu,
     [UPDATE_SELECTED_GENDER]: handleUpdateSelectedGender,
     // [UPDATE_SELECTED_FEATURE_IDX]: handleUpdateSelectedFeatureIdx,
     [UPDATE_SELECTED_MODEL]: handleUpdateSelectedModel,

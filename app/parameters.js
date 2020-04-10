@@ -90,11 +90,11 @@ export const FEATURES = [
   //   name: "sharedsubpage",
   //   bins: []
   // },
-  // {
-  //   range: [3, 4],
-  //   name: "repeatactivity",
-  //   bins: [3.0, 4.0]
-  // },
+  {
+    range: [0, 3, 4],
+    name: "repeatactivity",
+    bins: [0.0, 3.0, 4.0]
+  },
   {
     range: [0, 20],
     name: "questionnaire",

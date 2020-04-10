@@ -80,7 +80,7 @@ class MatrixGrid extends React.Component {
       zoom: 0
     };
 
-    const logMax = 300;
+    // const logMax = 300;
     const base = Math.log10(maxCnt);
     const matrixGridLayer = new MatrixGridPolygonLayer({
       id: `matrix-grid-layer`,

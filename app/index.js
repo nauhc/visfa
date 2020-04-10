@@ -11,7 +11,7 @@ import {
   loadAttention,
   updateLassoSelectedInstanceId,
   updateSelectedClass,
-  updateSelectedAge,
+  updateSelectedEdu,
   updateSelectedGender,
   updateSelectedFeatureIdx,
   updateSelectedModel,
@@ -58,7 +58,7 @@ const mapDispatchToProps = {
   loadAttention,
   updateLassoSelectedInstanceId,
   updateSelectedClass,
-  updateSelectedAge,
+  updateSelectedEdu,
   updateSelectedGender,
   updateSelectedFeatureIdx,
   updateSelectedModel,
@@ -83,7 +83,7 @@ const mapStateToProps = state => ({
   selectedMatrixId: getSelectedMatrixId(state),
   selectedInstanceId: state.selectedInstanceId,
   selectedClass: state.selectedClass,
-  selectedAge: state.selectedAge,
+  selectedEdu: state.selectedEdu,
   selectedGender: state.selectedGender,
   selectedFeatureIdx: getSelectedFeatureId(state),
   selectedModel: state.selectedModel,
@@ -104,7 +104,7 @@ class App extends Component {
       loadAttention,
       selectedInstanceId,
       selectedClass,
-      selectedAge,
+      selectedEdu,
       selectedGender,
       selectedFeatureIdx,
       selectedModel,
@@ -117,7 +117,7 @@ class App extends Component {
       JSON.stringify({
         selectedInstanceId,
         selectedClass,
-        selectedAge,
+        selectedEdu,
         selectedGender,
         selectedModel,
         selectedEpoch,
@@ -127,7 +127,7 @@ class App extends Component {
 
     // load attention
     const attnFilename =
-      "checkpoint-20200404-190935-023Epoch-0.89_attentions_noa4vis.csv";
+      "checkpoint-20200409-061253-023Epoch-0.88_attentions_noa4vis.csv";
     requestCSV(
       "../backend/data/oulad/vis_data/".concat(attnFilename),
       (error, response) => {
@@ -153,7 +153,7 @@ class App extends Component {
       updateAndFetchProperty,
       selectedInstanceId,
       selectedClass,
-      selectedAge,
+      selectedEdu,
       selectedGender,
       selectedModel,
       selectedEpoch,
@@ -165,7 +165,7 @@ class App extends Component {
       JSON.stringify({
         selectedInstanceId: payload,
         selectedClass,
-        selectedAge,
+        selectedEdu,
         selectedGender,
         selectedModel,
         selectedEpoch,
@@ -180,7 +180,7 @@ class App extends Component {
       updateAndFetchProperty,
       selectedInstanceId,
       selectedClass,
-      selectedAge,
+      selectedEdu,
       selectedGender,
       selectedModel,
       selectedEpoch,
@@ -195,7 +195,7 @@ class App extends Component {
       JSON.stringify({
         selectedInstanceId,
         selectedClass: classArr,
-        selectedAge,
+        selectedEdu,
         selectedGender,
         selectedModel,
         selectedEpoch,
@@ -210,7 +210,7 @@ class App extends Component {
       updateAndFetchProperty,
       selectedInstanceId,
       selectedClass,
-      selectedAge,
+      selectedEdu,
       selectedGender,
       selectedModel,
       selectedEpoch,
@@ -225,7 +225,7 @@ class App extends Component {
       JSON.stringify({
         selectedInstanceId,
         selectedClass,
-        selectedAge,
+        selectedEdu,
         selectedGender: genderArr,
         selectedModel,
         selectedEpoch,
@@ -234,28 +234,28 @@ class App extends Component {
     );
   };
 
-  handleUpdateAgeSelection = payload => {
+  handleUpdateEduSelection = payload => {
     const {
-      updateSelectedAge,
+      updateSelectedEdu,
       updateAndFetchProperty,
       selectedInstanceId,
       selectedClass,
-      selectedAge,
+      selectedEdu,
       selectedGender,
       selectedModel,
       selectedEpoch,
       selectedAttnRange
     } = this.props;
-    updateSelectedAge(payload);
+    updateSelectedEdu(payload);
 
     // if select all ranges, set selection to none
-    const ageArr = payload.length === 10 ? [] : payload.map(i => parseInt(i));
+    const eduArr = payload.length === 4 ? [] : payload;
 
     updateAndFetchProperty(
       JSON.stringify({
         selectedInstanceId,
         selectedClass,
-        selectedAge: ageArr,
+        selectedEdu: eduArr,
         selectedGender,
         selectedModel,
         selectedEpoch,
@@ -363,8 +363,8 @@ class App extends Component {
       updateSelectedInstanceID,
       selectedClass,
       updateSelectedClass,
-      selectedAge,
-      updateSelectedAge,
+      selectedEdu,
+      updateSelectedEdu,
       selectedGender,
       updateSelectedGender,
       selectedFeatureIdx,
@@ -399,7 +399,7 @@ class App extends Component {
     }
 
     // console.log("property", property);
-    console.log("matrixGrid and label", matrixGridNLabel);
+    // console.log("matrixGrid and label", matrixGridNLabel);
     // console.log("selectedAttnRange", selectedAttnRange);
     // console.log("selectedFeatureIdx", selectedFeatureIdx);
     // console.log("selectedMatrixId", selectedMatrixId);
@@ -408,7 +408,7 @@ class App extends Component {
 
     const classColor = "#999"; //#82ca9d -> green 130, 202, 157
     const genderColor = "#999"; //#82ca9d -> green 130, 202, 157
-    const ageColor = "#999"; //#8884d8 -> purple 136, 132, 216
+    const eduColor = "#999"; //#8884d8 -> purple 136, 132, 216
 
     return (
       <div className="App">
@@ -488,11 +488,11 @@ class App extends Component {
                   </div>
                 </div>
               </div>
-              <div className="barchart-age-label-container">
-                <h3 style={{ color: "#666" }} className="age-label">
+              <div className="barchart-edu-label-container">
+                <h3 style={{ color: "#666" }} className="edu-label">
                   Education
                 </h3>
-                <div className="barchart-age-container">
+                <div className="barchart-edu-container">
                   <AutoSizer>
                     {({ height, width }) => (
                       <InteractiveBarChart
@@ -501,8 +501,8 @@ class App extends Component {
                         data={property.education}
                         xkey={"x"}
                         barkey={"Inst Cnt"}
-                        color={ageColor}
-                        onSelectName={this.handleUpdateAgeSelection}
+                        color={eduColor}
+                        onSelectName={this.handleUpdateEduSelection}
                       />
                     )}
                   </AutoSizer>

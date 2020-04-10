@@ -76,7 +76,7 @@ body {
   grid-template-rows: 50% 50%;
   grid-template-areas:
     "barchart-gender-class"
-    "barchart-age";
+    "barchart-edu";
 }
 .barchart-gender-class-container {
   grid-area: barchart-gender-class;
@@ -108,13 +108,13 @@ body {
   grid-area: barchart-gender;
   /* border-bottom: solid #aaa 1px; */
 }
-.barchart-age-label-container {
-  grid-area: barchart-age;
+.barchart-edu-label-container {
+  grid-area: barchart-edu;
   display: grid;
   grid-template-rows: 20% 80%;
   grid-template-areas:
-    "age-label"
-    barchart-age-container;
+    "edu-label"
+    barchart-edu-container;
 }
 .event-view-container {
   grid-area: event-view;
