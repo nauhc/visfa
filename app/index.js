@@ -399,7 +399,7 @@ class App extends Component {
     }
 
     // console.log("property", property);
-    // console.log("matrixGrid and label", matrixGridNLabel);
+    console.log("matrixGrid and label", matrixGridNLabel);
     // console.log("selectedAttnRange", selectedAttnRange);
     // console.log("selectedFeatureIdx", selectedFeatureIdx);
     // console.log("selectedMatrixId", selectedMatrixId);

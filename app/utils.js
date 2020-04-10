@@ -26,7 +26,8 @@ export const interpolateColorTintsRGB = color => {
   return valuescolor
     .tints(1)
     .map(t => t.rgb)
-    .map(c => [c.r, c.b, c.g]);
+    .map(c => [c.r, c.g, c.b]);
+  // .map(c => [c.r, c.b, c.g]);
 };
 
 export const interpolateColorTints = color => {
@@ -142,7 +143,12 @@ export const singleDiagMatrix = (attentionVecs, attr, attrIdx) => {
   return cells;
 };
 
-export const switchMatrixOption = (option, class0data, class1data) => {
+export const switchMatrixOption = (
+  option,
+  class0data,
+  class1data,
+  attrIdxPair
+) => {
   if (
     !class0data ||
     class0data.length === 0 ||
@@ -158,12 +164,36 @@ export const switchMatrixOption = (option, class0data, class1data) => {
     case "class1":
       return class1data;
     case "difference":
-      return class0data.map((cell, i) => {
-        return {
-          ...cell,
-          cnt: class1data[i].cnt - cell.cnt
-        };
-      });
+      if (attrIdxPair[0] <= attrIdxPair[1]) {
+        // lower triangular matrix
+        return class0data.map((cell, i) => {
+          return {
+            ...cell,
+            cnt: class1data[i].cnt - cell.cnt
+          };
+        });
+      } else {
+        //upper triangular matrix
+        // console.log(attrIdxPair);
+        // if (attrIdxPair[0] === 14 && attrIdxPair[1] === 13) {
+        //   class0data.map((cell, i) => {
+        //     console.log(
+        //       "class1data[i].cnt.avg, Math.abs(class1data[i].cnt.var)",
+        //       class1data[i].cnt.avg,
+        //       Math.abs(class1data[i].cnt.var)
+        //     );
+        //   });
+        // }
+        return class0data.map((cell, i) => {
+          return {
+            ...cell,
+            cnt:
+              (class1data[i].cnt.avg - cell.cnt.avg) *
+              Math.max(Math.abs(class1data[i].cnt.var), Math.abs(cell.cnt.var))
+          };
+        });
+      }
+
     default:
       // console.log("class0data", class0data);
       // console.log("class1data", class1data);
@@ -183,7 +213,8 @@ export const variance = arr => {
   var m = mean(arr);
   return mean(arr.map(a => Math.pow(a - m, 2)));
 };
-export const mean = arr => (sum(arr) / arr.length).toFixed(4);
+// export const mean = arr => (sum(arr) / arr.length).toFixed(4);
+export const mean = arr => sum(arr) / arr.length;
 
 export const mean2Way = arr => {
   const minn = Math.min(...arr);
@@ -224,7 +255,10 @@ export const featuresWeightsNSort = (
     const class0DiagData = singleDiagMatrix(attn0Vecs, att, attIdx);
     // console.log("Diagonal class0DiagData", class0DiagData);
     const class1DiagData = singleDiagMatrix(attn1Vecs, att, attIdx);
-    return switchMatrixOption(matrixRepOption, class0DiagData, class1DiagData);
+    return switchMatrixOption(matrixRepOption, class0DiagData, class1DiagData, [
+      attIdx,
+      attIdx
+    ]);
   });
 
   // console.log("diagMats", diagMats);
@@ -268,7 +302,7 @@ export const singleMatrixData = (
   const binlength0 = attrPair[0].bins.length;
   const binlength1 = attrPair[1].bins.length;
 
-  var dict = {};
+  var dict = {}; // stores intance cnt (lower triangle) or calculated temporal avg/var (upper triangle)
   const attr0LvlIdx = FEATURES.findIndex(x => x.name === attrPair[0].name);
   const attr1LvlIdx = FEATURES.findIndex(x => x.name === attrPair[1].name);
 
@@ -293,11 +327,11 @@ export const singleMatrixData = (
         }
       }
     });
+
+    // console.log(dict);
   } else {
-    // dict = {};
     // upper triagular matrix
-    // console.log('attrIdxPair', attrIdxPair);
-    const vecDict = {};
+    const vecDict = {}; // stores instance cnt for all ts, shape (T, 0)
     attrPair[0].bins.forEach((lvl0, i0) => {
       attrPair[1].bins.forEach((lvl1, i1) => {
         vecDict[`${lvl0}#${lvl1}`] = Array.from(
@@ -347,9 +381,11 @@ export const singleMatrixData = (
           vecDict[key][obj.pos] += 1;
         }
       });
-      // console.log('vecDict', vecDict);
       Object.keys(vecDict).forEach(key => {
-        dict[key] = variance(vecDict[key]);
+        dict[key] = {
+          avg: sum(vecDict[key]) / vecDict[key].length,
+          var: variance(vecDict[key])
+        };
       });
     }
   }

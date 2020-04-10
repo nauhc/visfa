@@ -13,6 +13,7 @@ import {
   flattenDeep,
   featuresWeightsNSort
 } from "../utils";
+import { TEMPORAL_LENGTH } from "../parameters";
 
 export const getRankedFeatures = createSelector(
   [
@@ -93,29 +94,33 @@ const getMatrixGridData2D = createSelector(
     // console.log("matrixRepOption", matrixRepOption);
     // console.log("tempRange", tempRange);
     const [attn0Vecs, attn1Vecs] = attention;
+    // console.log("attn0Vecs", attn0Vecs);
     // console.log("rankedFeatures", rankedFeatures);
 
     return selectedFeatures.map((attCol, col) => {
       return selectedFeatures.map((attRow, row) => {
         // console.log("attCol", "attRow", attCol.name, attRow.name, col, row);
         // return [attCol, attRow];
-        // console.log("attn0Vecs", attn0Vecs);
         // console.log("attCol, attRow", attCol, attRow);
         const class0data = singleMatrixData(
           attn0Vecs,
           [attCol, attRow],
           [col, row],
-          [0, 47]
+          [0, TEMPORAL_LENGTH - 1]
         );
 
         const class1data = singleMatrixData(
           attn1Vecs,
           [attCol, attRow],
           [col, row],
-          [0, 47]
+          [0, TEMPORAL_LENGTH - 1]
         );
 
-        const data = switchMatrixOption("difference", class0data, class1data);
+        const data = switchMatrixOption("difference", class0data, class1data, [
+          col,
+          row
+        ]);
+        // console.log("class0data", class0data);
         // console.log("data", data);
         // matrix is {matId, data, rowIdx(levels in row), colIdx(levels in col),
         // rowAttr(attribute name), colAttr(attribute name), numCols, num}

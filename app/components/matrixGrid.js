@@ -5,7 +5,11 @@ import { render } from "react-dom";
 import MatrixGridPolygonLayer from "./matrix-grid-polygon-layer";
 import DeckGL from "@deck.gl/react";
 import { OrthographicView } from "@deck.gl/core";
-import { interpolateColorTintsRGB, interpolatedColor } from "../utils";
+import {
+  interpolateColorTintsRGB,
+  interpolatedColor,
+  flattenDeep
+} from "../utils";
 
 const DEFAULT_CELLL_SIZE = 10;
 const DEFAULT_MATRIX_INTERVAL = DEFAULT_CELLL_SIZE;
@@ -62,13 +66,22 @@ class MatrixGrid extends React.Component {
     //   .reduce((a, c) => a + c, 0);
     // const cell_size = Math.floor((width - 200) / (matrixInternalNum + cellNum));
 
+    const maxCnt = Math.max(
+      ...flattenDeep(
+        data.matrixGrid.map(mat => {
+          return mat.data.map(d => d.cnt);
+        })
+      )
+    );
+    // console.log(maxCnt);
+
     const viewState = {
       offset: [width / 2, height / 2],
       zoom: 0
     };
 
-    const logMax = 200;
-    const base = Math.log10(logMax);
+    const logMax = 300;
+    const base = Math.log10(maxCnt);
     const matrixGridLayer = new MatrixGridPolygonLayer({
       id: `matrix-grid-layer`,
       data: data,
