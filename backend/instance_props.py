@@ -50,7 +50,7 @@ def attentionHistogram(attnCol):
     for i in range(len(hist[1]) - 1):
         result.append({
             'x': "%.1f-%.1f" % (hist[1][i], hist[1][i] + 0.1),
-            'Inst Cnt': int(hist[0][i])
+            'Event Cnt': int(hist[0][i])
         })
 
     # print('attentionHistogram', result)

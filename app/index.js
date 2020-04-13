@@ -290,7 +290,7 @@ class App extends Component {
         selectedAttnRange,
         selectedNoiseReductionLvl,
         selectedClusterNumber,
-        sampleSize: 5000
+        sampleSize: 900
       })
     );
   };
@@ -317,7 +317,7 @@ class App extends Component {
         selectedAttnRange,
         selectedNoiseReductionLvl,
         selectedClusterNumber: payload,
-        sampleSize: 5000
+        sampleSize: 900
       })
     );
   };
@@ -350,7 +350,7 @@ class App extends Component {
         selectedAttnRange,
         selectedNoiseReductionLvl: payload,
         selectedClusterNumber,
-        sampleSize: 5000
+        sampleSize: 900
       })
     );
   };
@@ -522,7 +522,7 @@ class App extends Component {
                     height={height}
                     data={property.attention}
                     xkey={"x"}
-                    barkey={"Inst Cnt"}
+                    barkey={"Event Cnt"}
                     logscale={true}
                     color={"#82c0ee"}
                     onSelectName={this.handleSelectingAttnRange}

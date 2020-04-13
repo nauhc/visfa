@@ -21,8 +21,8 @@ const defaultProps = {
   title: null,
   clusterNumber: 2,
   sequenceVisData: [],
-  noiseReductionLvl: 0.2,
-  timeFocus: [0, 47],
+  noiseReductionLvl: 0,
+  timeFocus: [0, 50],
   onClusterNoSliderChange: () => {},
   onClickEstimateClusterNoButton: () => {},
   onNoiseReductionSliderChange: () => {},
@@ -170,7 +170,7 @@ class SequenceView extends React.Component {
                 Noise Reduction Level: {noiseReductionLvl}
               </h4>
               <Slider
-                defaultValue={0.2}
+                defaultValue={0}
                 getAriaValueText={valuetext}
                 aria-labelledby="discrete-slider"
                 valueLabelDisplay="auto"

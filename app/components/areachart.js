@@ -35,7 +35,7 @@ export default class InteractiveAreaChart extends PureComponent {
     countBarChartDataYkey: null,
     countBarChartDataYMax: 500,
     onSelectName: () => {},
-    brushRange: [0, 47],
+    brushRange: [0, 50],
     onChangeBrush: () => {}
   };
 

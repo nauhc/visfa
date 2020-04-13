@@ -5,7 +5,7 @@ from scipy.spatial import distance
 from collections import Counter
 from os import path
 from .gapstatistic import gapStatistic
-from .utils import utils
+# from .utils import utils
 from json import dumps, loads, dump, load
 from math import log10
 
@@ -154,10 +154,10 @@ class NoRCE:
         clusters = Counter(memberships).most_common(K)
         # print('clusters', clusters)
 
-        # percents = [0, 20, 40, 60, 80, 100]
+        percents = [0, 20, 40, 60, 80, 100]
         # percents = [10, 20, 40, 60, 80, 90]
         # percents = [10, 25, 40, 60, 75, 90]
-        percents = [15, 25, 40, 60, 75, 85]
+        # percents = [15, 25, 40, 60, 75, 85]
 
         topClusterVis = []
         # for c, labelNCnt in enumerate(topClusters):
@@ -221,7 +221,6 @@ class NoRCE:
     def posNegIdxConv2ReshapedNSavefile(self, arr, fn):
         posIdx = np.where(arr[:, 1] == 1)[0]
         negIdx = np.where(arr[:, 1] == 0)[0]
-        # print(posIdx)
         dict = {
             'pos': np.unique(posIdx // self.T).tolist(),
             'neg': np.unique(negIdx // self.T).tolist(),
@@ -243,6 +242,7 @@ class NoRCE:
                    sampleSizeStr, elbowStr, topKStr]
         fn = 'checkpoint-' + rnnStr + '_attentions_noa4vis.npy'
         arr = np.load(self.path + '/vis_data/' + fn)
+        # print('arr.shape', arr.shape)  # (374400, 20) 'attn', 'class', 'posId', 'seqId', vecs...
 
         #   -------- FILTER ATTENTION (EVENTS) -----------
         #   --- Divide data into ten attention ranges
@@ -263,7 +263,7 @@ class NoRCE:
             np.save(reshapedAttnFN, self.reshape(arr))  # all data
         print('\nREADING RESHAPED ATTENTION FILE...')
         reshapedAttn = np.load(reshapedAttnFN)  # (instance, time, feature)
-        # print('reshaped attn data', reshapedAttn.shape)  # (25600, 48, 34)
+        # print('reshaped attn data', reshapedAttn.shape)  # (2080, 180, 16)
 
         #   --- Get the index of pos and neg instances -----
         #   --- save index to file if not saved before -----
@@ -272,8 +272,8 @@ class NoRCE:
             self.posNegIdxConv2ReshapedNSavefile(arr, posNegIdxFn)
         with open(posNegIdxFn, 'r') as f:
             posNegIdx = load(f)
-        posIdx = posNegIdx['pos']
-        negIdx = posNegIdx['neg']
+        posIdx = posNegIdx['pos']  # len: 990
+        negIdx = posNegIdx['neg']  # len: 1090
         # print('posIdx', len(posIdx), posIdx[:10])  # 12894 [0,1,2, ...]
         # print('negIdx', len(negIdx), negIdx[:10])  # 12706 [12894, 12895, ...]
         #   ------- LOAD DATA, FILTER ATTENTION, AND RESHAPE (SAVE TO FILE) -------
@@ -288,29 +288,78 @@ class NoRCE:
             selectedAttnIdx = []
             for attnStart in attnRange:
                 # print(attnPortionIdx[str(attnStart)])
-                selectedAttnIdx += attnPortionIdx[str(attnStart)]
-            # print('selectedAttnRangeInstaIdx', len(selectedAttnIdx))
+                selectedAttnIdx += attnPortionIdx['%.1f' % attnStart]
+            # print('\nselectedAttnRangeInstaIdx', len(selectedAttnIdx))
             restIdx = list(set(range(instancebytime)) -
                            set(selectedAttnIdx))
+            # print('restIdx', len(restIdx))
             nanMask[restIdx] = True
         reshapedNanMask = np.reshape(
             nanMask, (instancebytime // self.T, self.T))
+        # print('nanMask.shape', nanMask.shape)  # (374400,)
+        # print('reshapedNanMask.shape', reshapedNanMask.shape)  # (2080, 180)
 
         # #   ------- SET VALUES not in AttnRange to Nan --------
         pos_feature = reshapedAttn[:, :, featureIdx][posIdx]
         posAttnMask = reshapedNanMask[posIdx]
         maskedPos = np.ma.array(pos_feature, mask=posAttnMask)
         pos = np.ma.filled(maskedPos.astype(float), np.nan)
+        # np.savetxt("posWithNan.csv", pos, delimiter=",", fmt="%s") #check
 
         neg_feature = reshapedAttn[:, :, featureIdx][negIdx]
         negAttnMask = reshapedNanMask[negIdx]
         maskedNeg = np.ma.array(neg_feature, mask=negAttnMask)
         neg = np.ma.filled(maskedNeg.astype(float), np.nan)
-        # print(pos.shape, neg.shape)  # (12894, 48) (12706, 48)
+        # np.savetxt("negWithNan.csv", neg, delimiter=",", fmt="%s") #check
+        # return
+        print('pos.shape, neg.shape', pos.shape,
+              neg.shape)  # (990, 180) (1090, 180)
+        #
+        # # check pos neg matrices
+        # posCntOnT = []
+        # negCntOnT = []
+        # for i in range(pos.shape[1]):
+        #     posCntOnT.append(np.count_nonzero(~np.isnan(pos[:, i])))
+        #     negCntOnT.append(np.count_nonzero(~np.isnan(neg[:, i])))
+        # print(posCntOnT)  # [0, ... 0 , 665, 704]
+        # print(negCntOnT)  # [0, ... 0 , 110, 97]
+        #
+        # # return
+        # nonNanIdxPos = np.argwhere(~np.isnan(pos))
+        # print('pos ts', np.histogram(
+        #     nonNanIdxPos[:, 1], np.unique(nonNanIdxPos[:, 1])))
+        #
+        # nonNanIdxNeg = np.argwhere(~np.isnan(neg))
+        # print('neg ts', np.histogram(
+        #     nonNanIdxNeg[:, 1], np.unique(nonNanIdxNeg[:, 1])))
+        # posValues178 = []
+        # posValues179 = []
+        # for i in nonNanIdxPos:
+        #     posValues178.append(pos[i[0], 178])
+        #     posValues179.append(pos[i[0], 179])
+        # print('posValues178', posValues178)
+        # return
+        #
+        # negValues178 = []
+        # negValues179 = []
+        # for i in nonNanIdxNeg:
+        #     negValues178.append(neg[i[0], 178])
+        #     negValues179.append(neg[i[0], 179])
+        #
+        # print('posValues178', np.histogram(
+        #     posValues178, bins=np.unique(posValues178)))
+        # # print('posValues179', np.histogram(
+        # #     posValues179, bins=np.unique(posValues179)))
+        # # print('negValues', np.histogram(negValues, bins=np.unique(negValues)))
+        # # print('number of non nan in pos', np.count_nonzero(~np.isnan(pos)))
+        # # print('number of non nan in neg', np.count_nonzero(~np.isnan(neg)))
+        # return
 
         # fill nan with 0
         pos0fill = np.nan_to_num(pos)
         neg0fill = np.nan_to_num(neg)
+        print('pos0fill.shape', pos0fill.shape)
+        print('neg0fill.shape', neg0fill.shape)
         # --------- DATA LOADING AND RESHAPE END.  --------
 
         # ---------- DATA SAMPLING ------
@@ -321,7 +370,8 @@ class NoRCE:
                 print('\nSAMPLING POS AND NEG ATTENTIONS.')
                 posSampleIdx = self.sampling(pos0fill, self.sample_size)
                 negSampleIdx = self.sampling(neg0fill, self.sample_size)
-                np.savez(posNegSampleIdxFN, pos=posSampleIdx, neg=negSampleIdx)
+                np.savez(posNegSampleIdxFN, pos=posSampleIdx,
+                         neg=negSampleIdx)
                 print('\nDONE SAMPLING DATA.')
             # ---------- DATA SAMPLING END. (SAVED TO FILES) ------
 
@@ -369,7 +419,8 @@ class NoRCE:
                 majorPosIdx = self.noiseReductElbow(posZ)
                 majorNegIdx = self.noiseReductElbow(negZ)
                 print('\nDONE DIVIDING SAMPLE INSTANCES USING ELBOW METHOD.')
-                np.savez(noiseReductionFN, pos=majorPosIdx, neg=majorNegIdx)
+                np.savez(noiseReductionFN, pos=majorPosIdx,
+                         neg=majorNegIdx)
 
             noiseReductionIdx = np.load(noiseReductionFN)
             majorPosIdx = noiseReductionIdx['pos']

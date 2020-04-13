@@ -21,7 +21,7 @@ import {
 } from "./actions";
 
 import { flattenDeep, unique } from "./utils";
-import { FEATURES } from "./parameters";
+import { FEATURES, TEMPORAL_LENGTH } from "./parameters";
 
 // ----  Reducers ---- // (reduce to new state)
 // Redux root state tree
@@ -44,8 +44,8 @@ const DEFAULT_STATE = {
   selectedFeatureNumber: 15,
   selectedClusterNumber: 2,
   estimatedClusterNumber: null,
-  selectedSequenceTimeBrush: [0, 47],
-  selectedNoiseReductionLvl: 0.2
+  selectedSequenceTimeBrush: [0, TEMPORAL_LENGTH - 1],
+  selectedNoiseReductionLvl: 0
 };
 
 const handleLoadProperty = (state, { payload }) => {
