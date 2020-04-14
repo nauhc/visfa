@@ -58,30 +58,36 @@ class InteractiveBarChart extends React.Component {
   constructor() {
     super();
     this.state = {
-      clickedLabel: []
+      clickedBar: []
     };
   }
 
   handleClick = e => {
-    // console.log(e);
     if (!e) {
       return;
     }
 
-    const { clickedLabel } = this.state;
+    const eObj = {
+      x: e.activeLabel,
+      y: e.activePayload[0].value
+    };
+    const { clickedBar } = this.state;
 
-    const idx = clickedLabel.indexOf(e.activeLabel);
+    // check if current click is in the clickedBar list
+    const idx = clickedBar.map(o => o.x).indexOf(eObj.x);
     if (idx > -1) {
-      clickedLabel.splice(idx, 1);
+      // if in the list, remove
+      clickedBar.splice(idx, 1);
     } else {
-      clickedLabel.push(e.activeLabel);
+      // if not in the list, add to the list
+      clickedBar.push(eObj);
     }
 
     this.setState({
-      clickedLabel
+      clickedBar
     });
 
-    this.props.onSelectName(clickedLabel);
+    this.props.onSelectName(clickedBar);
   };
 
   render() {
@@ -98,7 +104,7 @@ class InteractiveBarChart extends React.Component {
       color,
       barWidth
     } = this.props;
-    const { clickedLabel } = this.state;
+    const { clickedBar } = this.state;
     if (!width || !height || !data || data.length === 0 || !xkey || !barkey) {
       return null;
     }
@@ -109,9 +115,9 @@ class InteractiveBarChart extends React.Component {
         width: 0
       };
     });
-    if (clickedLabel.length) {
+    if (clickedBar.length) {
       borders = data.map(o => {
-        if (clickedLabel.includes(o[xkey])) {
+        if (clickedBar.map(b => b.x).includes(o[xkey])) {
           return {
             color,
             width: 1

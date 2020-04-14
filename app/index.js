@@ -193,7 +193,7 @@ class App extends Component {
     updateSelectedClass(payload);
 
     // if select both set selection to none
-    const classArr = payload.length === 1 ? payload : [];
+    const classArr = payload.length === 1 ? payload.map(o => o.x) : [];
 
     updateAndFetchProperty(
       JSON.stringify({
@@ -221,7 +221,7 @@ class App extends Component {
     updateSelectedGender(payload);
 
     // if select both set selection to none
-    const genderArr = payload.length === 1 ? payload : [];
+    const genderArr = payload.length === 1 ? payload.map(o => o.x) : [];
 
     updateAndFetchProperty(
       JSON.stringify({
@@ -249,7 +249,7 @@ class App extends Component {
     updateSelectedEdu(payload);
 
     // if select all ranges, set selection to none
-    const eduArr = payload.length === 4 ? [] : payload;
+    const eduArr = payload.length === 4 ? [] : payload.map(o => o.x);
 
     updateAndFetchProperty(
       JSON.stringify({

@@ -5,6 +5,7 @@ import csv
 from sklearn.manifold import TSNE
 from os import path
 np.set_printoptions(suppress=True)
+# pd.set_option('display.max_columns', None)
 propFilePath = './data/oulad/props/'
 visFilePath = './data/oulad/vis_data/'
 
@@ -179,7 +180,6 @@ def updatePropertyVisData(df, visDataDict, instanceId, classId, gender, educatio
     selectedClass = len(classId)
     selectedGender = len(gender)
     selectedEducation = len(education)
-
     selectedIdx = [*range(len(df))]  # intialize to all
     if selectedInstance:
         idxByInstanceId = df[df['id'].isin(instanceId)]['resetIdx'].tolist()

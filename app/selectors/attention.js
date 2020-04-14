@@ -1,28 +1,37 @@
 import { createSelector } from "reselect";
 
-import { getAttention, getSelectedAttnRange } from "./base";
+import {
+  getAttention,
+  getSelectedAttnRange,
+  getSelectedAttnPercentile
+} from "./base";
 import { attn2vec } from "../utils";
 
 export const getAttnRangeFilteredAttention = createSelector(
-  [getSelectedAttnRange, getAttention],
-  (selectedRange, attention) => {
+  [getSelectedAttnRange, getSelectedAttnPercentile, getAttention],
+  (selectedRange, selectedAttnPercent, attention) => {
     if (!attention || attention.length == 0) {
       return null;
     }
-    if (!selectedRange.length) {
+    if (!selectedRange.length && !selectedAttnPercent.length) {
       return attention;
     }
 
-    let attnRangeFiltered = [];
-    selectedRange.forEach(rangeStart => {
-      const currAttns = attention.filter(atts => {
-        return atts.attn >= rangeStart && atts.attn <= rangeStart + 0.1;
+    if (selectedAttnPercent.length) {
+      // filter by selected percentile
+      console.log("selectedAttnPercent", selectedAttnPercent);
+    } else {
+      // filter by selected range
+      let attnRangeFiltered = [];
+      selectedRange.forEach(rangeStart => {
+        const currAttns = attention.filter(atts => {
+          return atts.attn >= rangeStart && atts.attn <= rangeStart + 0.1;
+        });
+
+        attnRangeFiltered = attnRangeFiltered.concat(currAttns);
       });
-
-      attnRangeFiltered = attnRangeFiltered.concat(currAttns);
-    });
-
-    return attnRangeFiltered;
+      return attnRangeFiltered;
+    }
   }
 );
 

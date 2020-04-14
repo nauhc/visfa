@@ -80,19 +80,19 @@ const handleLoadSequence = (state, { payload }) => {
 const handleUpdateSelectedClass = (state, { payload }) => {
   return {
     ...state,
-    selectedClass: payload
+    selectedClass: payload.map(o => o.x)
   };
 };
 const handleUpdateSelectedEdu = (state, { payload }) => {
   return {
     ...state,
-    selectedEdu: payload
+    selectedEdu: payload.map(o => o.x)
   };
 };
 const handleUpdateSelectedGender = (state, { payload }) => {
   return {
     ...state,
-    selectedGender: payload
+    selectedGender: payload.map(o => o.x)
   };
 };
 // const handleUpdateSelectedFeatureIdx = (state, { payload }) => {
@@ -129,11 +129,10 @@ const handleUpdateSelectedAttnRange = (state, { payload }) => {
     payload
       .map(o => {
         // return o.split("-").map(s => parseFloat(s)); // both start and end
-        return parseFloat(o.split("-")[0]); // only start
+        return parseFloat(o.x.split("-")[0]); // only start
       })
       .sort()
   );
-
   return {
     ...state,
     // selectedAttnRange: flattenDeep(tmp).filter(unique)
@@ -142,10 +141,10 @@ const handleUpdateSelectedAttnRange = (state, { payload }) => {
 };
 
 const handleUpdateSelectedAttnPercentile = (state, { payload }) => {
-  const arr = payload.map(o => parseFloat(o) / 100).sort();
+  // console.log("handleUpdateSelectedAttnPercentile", payload);
   return {
     ...state,
-    selectedAttnPercentile: arr
+    selectedAttnPercentile: payload
   };
 };
 

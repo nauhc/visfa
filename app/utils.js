@@ -247,7 +247,6 @@ export const featuresWeightsNSort = (
   attn1Vecs,
   matrixRepOption
 ) => {
-  // console.log("features", features);
   // console.log("attn0Vecs", attn0Vecs);
   // console.log("matrixRepOption", matrixRepOption);
 
@@ -260,7 +259,6 @@ export const featuresWeightsNSort = (
       attIdx
     ]);
   });
-
   const weightedAttrOpts = features.map((attr, attrIdx) => {
     let arr = [];
     diagMats[attrIdx].forEach(c => {

@@ -68,6 +68,7 @@ def norce():
     print('SAMPLE_SIZE', SAMPLE_SIZE)
     print('featureIdx', featureIdx)
     print('attnRange', attnRange)
+    print('attnPercentile', attnPercentile)
     print('topK', TOPK)
 
     norce_obj = NoRCE(filepath, time, best_epoch,
