@@ -67,7 +67,7 @@ def attentionPercentileChart(attnCol):
         attnRange = [previous, v]
         previous = v
         result.append({
-            'x': '%2d' % percent,
+            'x': '%2d' % (percent - 10),  # use range start
             'Attn Value': attnRange
         })
     # previous = 0

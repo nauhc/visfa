@@ -19,7 +19,15 @@ export const getAttnRangeFilteredAttention = createSelector(
 
     if (selectedAttnPercent.length) {
       // filter by selected percentile
-      console.log("selectedAttnPercent", selectedAttnPercent);
+      let attnPercentFiltered = [];
+      selectedAttnPercent.forEach(obj => {
+        const range = obj.y;
+        const currAttns = attention.filter(atts => {
+          return atts.attn >= range[0] && atts.attn <= range[1];
+        });
+        attnPercentFiltered = attnPercentFiltered.concat(currAttns);
+      });
+      return attnPercentFiltered;
     } else {
       // filter by selected range
       let attnRangeFiltered = [];

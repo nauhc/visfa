@@ -59,13 +59,14 @@ def norce():
 
     featureIdx = d['selectedFeatureIdx']
     attnRange = d['selectedAttnRange']
-    attnPercentile = d['selectedAttnPercentile']
+    attnPercentile = [
+        float(obj['x']) / 100 for obj in d['selectedAttnPercentile']]
 
     SAMPLE_SIZE = d['sampleSize']
     TOPK = d['selectedClusterNumber']
     ELBOW = d['selectedNoiseReductionLvl']
 
-    print('SAMPLE_SIZE', SAMPLE_SIZE)
+    print('\n\nSAMPLE_SIZE', SAMPLE_SIZE)
     print('featureIdx', featureIdx)
     print('attnRange', attnRange)
     print('attnPercentile', attnPercentile)

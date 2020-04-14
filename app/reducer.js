@@ -136,14 +136,19 @@ const handleUpdateSelectedAttnRange = (state, { payload }) => {
   return {
     ...state,
     // selectedAttnRange: flattenDeep(tmp).filter(unique)
+    selectedAttnPercentileRep: false,
     selectedAttnRange: attnRangeArr
   };
 };
 
 const handleUpdateSelectedAttnPercentile = (state, { payload }) => {
   // console.log("handleUpdateSelectedAttnPercentile", payload);
+  // payload is array of objs: {x: xvalue, y: yvalue}
+  // because frontend matrix calculation uses y value,
+  // and backend sequence calculation uses x value, storing both
   return {
     ...state,
+    selectedAttnPercentileRep: true,
     selectedAttnPercentile: payload
   };
 };
