@@ -105,7 +105,8 @@ class NoRCE:
         percentileArr = []
         for col in range(tCnt):
             values = cluster[col]
-            percentileArr.append([np.percentile(values, p) for p in percents])
+            percentileArr.append(
+                [np.percentile(values, p, interpolation='nearest') for p in percents])
         percentileArr = np.around(np.array(percentileArr), 4)
         percentileArr = np.nan_to_num(percentileArr)
         # print('percentileArr', percentileArr.shape)  # (48, 6)
@@ -218,6 +219,20 @@ class NoRCE:
         with open(fn, 'w') as fp:
             dump(dict, fp)
 
+    def attnPercentileSaveFile(self, arr, fn):
+        attns = arr[:, 0]
+        dict = {}
+        thresholds = []
+        for percentile in np.arange(0, 1.1, 0.1):
+            v = np.percentile(attns, percentile, interpolation='nearest')
+            thresholds.append(v)
+        for (i, thr) in enumerate(thresholds[:-1]):
+            idx = np.where((attns >= thr) & (attns < thresholds[i + 1]))[0]
+            # set the attn on idx as original and set the rest as nan
+            dict['%.1f' % (i * 0.1)] = idx.tolist()
+        with open(fn, 'w') as fp:
+            dump(dict, fp)
+
     def posNegIdxConv2ReshapedNSavefile(self, arr, fn):
         posIdx = np.where(arr[:, 1] == 1)[0]
         negIdx = np.where(arr[:, 1] == 0)[0]
@@ -234,11 +249,14 @@ class NoRCE:
         # column [4:] are 34 dimensional vector
         rnnStr = self.t + '-%03dEpoch-%.2f' % (self.epoch, self.accuracy)
         featureIdxStr = '%02d' % (featureIdx)
-        attnRangeStr = ('-').join([str(a) for a in attnRange])
+        if len(attnRatio) != 0:
+            attnSelectStr = ('^').join([str(a) for a in attnRatio])
+        else:
+            attnSelectStr = ('-').join([str(a) for a in attnRange])
         sampleSizeStr = str(self.sample_size)
         elbowStr = '%.01f' % self.elbow
         topKStr = str(self.topk)
-        allStrs = [rnnStr, featureIdxStr, attnRangeStr,
+        allStrs = [rnnStr, featureIdxStr, attnSelectStr,
                    sampleSizeStr, elbowStr, topKStr]
         fn = 'checkpoint-' + rnnStr + '_attentions_noa4vis.npy'
         arr = np.load(self.path + '/vis_data/' + fn)
@@ -254,6 +272,13 @@ class NoRCE:
             self.attnPortionsSaveFile(arr, filteredAttnFN)
         with open(filteredAttnFN, 'r') as f:
             attnPortionIdx = load(f)
+
+        filteredAttnPercentFN = dir + fn.replace('.npy', '_percents_idx.json')
+        if not path.exists(filteredAttnPercentFN):
+            self.attnPercentileSaveFile(arr, filteredAttnPercentFN)
+        with open(filteredAttnPercentFN, 'r') as f:
+            attnPercentileIdx = load(f)
+
         # print(attnPortionIdx.keys())  # ["0.0", "0.1" ..., "0.9"]
 
         #   --- Reshape and save DATA to file if not saved before -----
@@ -284,16 +309,18 @@ class NoRCE:
         instancebytime = len(arr)
         # shape (instance x time, 1)
         nanMask = np.array([False for i in range(instancebytime)])
-        if len(attnRange) != 0:
-            selectedAttnIdx = []
+        selectedAttnIdx = []
+        if len(attnRatio) != 0:
+            for attnStart in attnRatio:
+                selectedAttnIdx += attnPercentileIdx['%.1f' % attnStart]
+        elif len(attnRange) != 0:
             for attnStart in attnRange:
                 # print(attnPortionIdx[str(attnStart)])
                 selectedAttnIdx += attnPortionIdx['%.1f' % attnStart]
-            # print('\nselectedAttnRangeInstaIdx', len(selectedAttnIdx))
-            restIdx = list(set(range(instancebytime)) -
-                           set(selectedAttnIdx))
-            # print('restIdx', len(restIdx))
-            nanMask[restIdx] = True
+
+        restIdx = list(set(range(instancebytime)) - set(selectedAttnIdx))
+        # print('restIdx', len(restIdx))
+        nanMask[restIdx] = True
         reshapedNanMask = np.reshape(
             nanMask, (instancebytime // self.T, self.T))
         # print('nanMask.shape', nanMask.shape)  # (374400,)

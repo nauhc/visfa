@@ -11,6 +11,8 @@ import {
   UPDATE_SELECTED_MODEL,
   UPDATE_SELECTED_EPOCH,
   UPDATE_SELECTED_ATTN_RANGE,
+  UPDATE_ATTN_SWITCH_VALUE,
+  UPDATE_SELECTED_ATTN_PERCENTILE,
   UPDATE_SELECTED_MATRIX,
   UPDATE_FEATURE_NUMBER,
   UPDATE_CLUSTER_NUMBER,
@@ -39,6 +41,8 @@ const DEFAULT_STATE = {
   selectedModel: null,
   selectedEpoch: null,
   selectedAttnRange: [],
+  selectedAttnPercentile: [],
+  selectedAttnPercentileRep: false,
   selectedLassoId: [],
   selectedMatrixId: null,
   selectedFeatureNumber: 15,
@@ -110,6 +114,16 @@ const handleUpdateSelectedEpoch = (state, { payload }) => {
     selectedEpoch: payload
   };
 };
+
+const handleUpdateSelectedAttnPercentileRepSwitchValue = (
+  state,
+  { payload }
+) => {
+  return {
+    ...state,
+    selectedAttnPercentileRep: payload
+  };
+};
 const handleUpdateSelectedAttnRange = (state, { payload }) => {
   const attnRangeArr = flattenDeep(
     payload
@@ -124,6 +138,14 @@ const handleUpdateSelectedAttnRange = (state, { payload }) => {
     ...state,
     // selectedAttnRange: flattenDeep(tmp).filter(unique)
     selectedAttnRange: attnRangeArr
+  };
+};
+
+const handleUpdateSelectedAttnPercentile = (state, { payload }) => {
+  const arr = payload.map(o => parseFloat(o) / 100).sort();
+  return {
+    ...state,
+    selectedAttnPercentile: arr
   };
 };
 
@@ -200,7 +222,9 @@ export default handleActions(
     // [UPDATE_SELECTED_FEATURE_IDX]: handleUpdateSelectedFeatureIdx,
     [UPDATE_SELECTED_MODEL]: handleUpdateSelectedModel,
     [UPDATE_SELECTED_EPOCH]: handleUpdateSelectedEpoch,
+    [UPDATE_ATTN_SWITCH_VALUE]: handleUpdateSelectedAttnPercentileRepSwitchValue,
     [UPDATE_SELECTED_ATTN_RANGE]: handleUpdateSelectedAttnRange,
+    [UPDATE_SELECTED_ATTN_PERCENTILE]: handleUpdateSelectedAttnPercentile,
     [UPDATE_LASSO_SELECTED_INSTANCE_ID]: handleUpdateLassoSelectedInstanceId,
     [UPDATE_SELECTED_MATRIX]: handleUpdateSelectedMatrix,
     [UPDATE_FEATURE_NUMBER]: handleUpdateFeatureNumber,

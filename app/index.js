@@ -17,6 +17,8 @@ import {
   updateSelectedModel,
   updateSelectedEpoch,
   updateSelectedAttnRange,
+  updateAttnSwitchValue,
+  updateSelectedAttnPercentile,
   updateSelectedMatrix,
   updateFeatureNumber,
   updateClusterNumber,
@@ -32,6 +34,7 @@ import {
   getAttention,
   getSequence,
   getSelectedAttnRange,
+  getSelectedAttnPercentile,
   getSelectedFeatureNumber,
   getSelectedMatrixId
 } from "./selectors/base";
@@ -50,6 +53,8 @@ import { arrInRange } from "./utils";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 //  ----  Redux Utility Functions   ---- //
 const mapDispatchToProps = {
@@ -63,7 +68,9 @@ const mapDispatchToProps = {
   updateSelectedFeatureIdx,
   updateSelectedModel,
   updateSelectedEpoch,
+  updateAttnSwitchValue,
   updateSelectedAttnRange,
+  updateSelectedAttnPercentile,
   updateSelectedMatrix,
   updateFeatureNumber,
   updateClusterNumber,
@@ -89,6 +96,8 @@ const mapStateToProps = state => ({
   selectedModel: state.selectedModel,
   selectedEpoch: state.selectedEpoch,
   selectedAttnRange: getSelectedAttnRange(state),
+  selectedAttnPercentile: getSelectedAttnPercentile(state),
+  selectedAttnPercentileRep: state.selectedAttnPercentileRep,
   selectedFeatureNumber: getSelectedFeatureNumber(state),
   selectedClusterNumber: state.selectedClusterNumber,
   estimatedClusterNumber: state.estimatedClusterNumber,
@@ -108,8 +117,7 @@ class App extends Component {
       selectedGender,
       selectedFeatureIdx,
       selectedModel,
-      selectedEpoch,
-      selectedAttnRange
+      selectedEpoch
     } = this.props;
 
     // load property
@@ -120,8 +128,7 @@ class App extends Component {
         selectedEdu,
         selectedGender,
         selectedModel,
-        selectedEpoch,
-        selectedAttnRange
+        selectedEpoch
       })
     );
 
@@ -156,8 +163,7 @@ class App extends Component {
       selectedEdu,
       selectedGender,
       selectedModel,
-      selectedEpoch,
-      selectedAttnRange
+      selectedEpoch
     } = this.props;
     updateLassoSelectedInstanceId(payload);
 
@@ -168,8 +174,7 @@ class App extends Component {
         selectedEdu,
         selectedGender,
         selectedModel,
-        selectedEpoch,
-        selectedAttnRange
+        selectedEpoch
       })
     );
   };
@@ -183,8 +188,7 @@ class App extends Component {
       selectedEdu,
       selectedGender,
       selectedModel,
-      selectedEpoch,
-      selectedAttnRange
+      selectedEpoch
     } = this.props;
     updateSelectedClass(payload);
 
@@ -198,8 +202,7 @@ class App extends Component {
         selectedEdu,
         selectedGender,
         selectedModel,
-        selectedEpoch,
-        selectedAttnRange
+        selectedEpoch
       })
     );
   };
@@ -213,8 +216,7 @@ class App extends Component {
       selectedEdu,
       selectedGender,
       selectedModel,
-      selectedEpoch,
-      selectedAttnRange
+      selectedEpoch
     } = this.props;
     updateSelectedGender(payload);
 
@@ -228,8 +230,7 @@ class App extends Component {
         selectedEdu,
         selectedGender: genderArr,
         selectedModel,
-        selectedEpoch,
-        selectedAttnRange
+        selectedEpoch
       })
     );
   };
@@ -243,8 +244,7 @@ class App extends Component {
       selectedEdu,
       selectedGender,
       selectedModel,
-      selectedEpoch,
-      selectedAttnRange
+      selectedEpoch
     } = this.props;
     updateSelectedEdu(payload);
 
@@ -258,8 +258,7 @@ class App extends Component {
         selectedEdu: eduArr,
         selectedGender,
         selectedModel,
-        selectedEpoch,
-        selectedAttnRange
+        selectedEpoch
       })
     );
   };
@@ -272,6 +271,7 @@ class App extends Component {
       features,
       updateAndFetchSequences,
       selectedAttnRange,
+      selectedAttnPercentile,
       selectedNoiseReductionLvl,
       selectedClusterNumber,
       selectedFeatureIdx
@@ -288,6 +288,7 @@ class App extends Component {
       JSON.stringify({
         selectedFeatureIdx: selectedOrgFeatureId,
         selectedAttnRange,
+        selectedAttnPercentile,
         selectedNoiseReductionLvl,
         selectedClusterNumber,
         sampleSize: 900
@@ -300,11 +301,17 @@ class App extends Component {
     updateSelectedAttnRange(payload);
   };
 
+  handleSelectingAttnPercentile = payload => {
+    const { updateSelectedAttnPercentile } = this.props;
+    updateSelectedAttnPercentile(payload);
+  };
+
   handleChangeClusterNumber = payload => {
     const {
       updateClusterNumber,
       updateAndFetchSequences,
       selectedAttnRange,
+      selectedAttnPercentile,
       selectedNoiseReductionLvl,
       selectedClusterNumber,
       selectedFeatureIdx
@@ -315,6 +322,7 @@ class App extends Component {
       JSON.stringify({
         selectedFeatureIdx: selectedFeatureIdx[0],
         selectedAttnRange,
+        selectedAttnPercentile,
         selectedNoiseReductionLvl,
         selectedClusterNumber: payload,
         sampleSize: 900
@@ -327,6 +335,7 @@ class App extends Component {
       updateEstimatedClusterNumber,
       selectedFeatureIdx,
       selectedAttnRange,
+      selectedAttnPercentile,
       selectedNoiseReductionLvl,
       selectedClusterNumber
     } = this.props;
@@ -340,6 +349,7 @@ class App extends Component {
       updateAndFetchSequences,
       selectedFeatureIdx,
       selectedAttnRange,
+      selectedAttnPercentile,
       selectedClusterNumber
     } = this.props;
     updateNoiseReductionLvl(payload);
@@ -348,6 +358,7 @@ class App extends Component {
       JSON.stringify({
         selectedFeatureIdx: selectedFeatureIdx[0],
         selectedAttnRange,
+        selectedAttnPercentile,
         selectedNoiseReductionLvl: payload,
         selectedClusterNumber,
         sampleSize: 900
@@ -374,7 +385,8 @@ class App extends Component {
       selectedEpoch,
       updateSelectedEpoch,
       selectedAttnRange,
-      updateSelectedAttnRange,
+      selectedAttnPercentileRep,
+      updateAttnSwitchValue,
       updateLassoSelectedInstanceId,
       rankedFeatures,
       matrixGridNLabel,
@@ -455,6 +467,7 @@ class App extends Component {
                     <AutoSizer>
                       {({ height, width }) => (
                         <InteractiveBarChart
+                          id={"gender-barchart"}
                           width={width}
                           height={height}
                           data={property.gender}
@@ -475,6 +488,7 @@ class App extends Component {
                     <AutoSizer>
                       {({ height, width }) => (
                         <InteractiveBarChart
+                          id={"class-barchart"}
                           width={width}
                           height={height}
                           data={property.class}
@@ -496,6 +510,7 @@ class App extends Component {
                   <AutoSizer>
                     {({ height, width }) => (
                       <InteractiveBarChart
+                        id={"edu-barchart"}
                         width={width}
                         height={height}
                         data={property.education}
@@ -514,21 +529,55 @@ class App extends Component {
             <h2 style={{ color: "#444" }} className="event-view-title">
               Temporal Event Property: Attribution
             </h2>
-            <div className="barchart-attn-container">
-              <AutoSizer>
-                {({ height, width }) => (
-                  <InteractiveBarChart
-                    width={width}
-                    height={height}
-                    data={property.attention}
-                    xkey={"x"}
-                    barkey={"Event Cnt"}
-                    logscale={true}
-                    color={"#82c0ee"}
-                    onSelectName={this.handleSelectingAttnRange}
+            <div className="attn-selector-switch">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={selectedAttnPercentileRep}
+                    onChange={(e, v) => updateAttnSwitchValue(v)}
+                    name="selectedAttnPercentileRep"
+                    color="primary"
                   />
-                )}
-              </AutoSizer>
+                }
+                label=" Attention Percentile Representation"
+              />
+            </div>
+            <div className="barchart-attn-container">
+              {selectedAttnPercentileRep ? (
+                <AutoSizer>
+                  {({ height, width }) => (
+                    <InteractiveBarChart
+                      id={"attn-percentiles"}
+                      width={width}
+                      height={height}
+                      data={property.attentionPercentile}
+                      xkey={"x"}
+                      barkey={"Attn Value"}
+                      logscale={true}
+                      yTicks={[0.00001, 0.0001, 0.001, 0.01, 0.1, 1]}
+                      color={"#82c0ee"}
+                      onSelectName={this.handleSelectingAttnPercentile}
+                    />
+                  )}
+                </AutoSizer>
+              ) : (
+                <AutoSizer>
+                  {({ height, width }) => (
+                    <InteractiveBarChart
+                      id={"attn-ranges"}
+                      width={width}
+                      height={height}
+                      data={property.attention}
+                      xkey={"x"}
+                      barkey={"Event Cnt"}
+                      logscale={true}
+                      yTicks={[0.1, 10, 1000, 100000]}
+                      color={"#82c0ee"}
+                      onSelectName={this.handleSelectingAttnRange}
+                    />
+                  )}
+                </AutoSizer>
+              )}
             </div>
           </div>
         </div>

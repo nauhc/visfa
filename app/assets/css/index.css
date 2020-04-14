@@ -119,13 +119,17 @@ body {
 .event-view-container {
   grid-area: event-view;
   display: grid;
-  grid-template-rows: 15% 80%;
+  grid-template-rows: 15% 15% 65%;
   grid-template-areas:
     "event-view-title"
+    "attn-selector-switch"
     "barchart-attn";
 }
 .barchart-attn-container {
   grid-area: barchart-attn;
+}
+.attn-selector-switch {
+  margin: 10px;
 }
 
 /* ---- Summary View --- */

@@ -19,6 +19,10 @@ export const getSelectedAttnRange = createSelector(rootSelector, state => {
   return state.selectedAttnRange;
 });
 
+export const getSelectedAttnPercentile = createSelector(rootSelector, state => {
+  return state.selectedAttnPercentile;
+});
+
 export const getFeatures = createSelector(rootSelector, state => {
   // console.log("state.features", state.features);
   return state.features;

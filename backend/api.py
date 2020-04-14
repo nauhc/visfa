@@ -59,6 +59,8 @@ def norce():
 
     featureIdx = d['selectedFeatureIdx']
     attnRange = d['selectedAttnRange']
+    attnPercentile = d['selectedAttnPercentile']
+
     SAMPLE_SIZE = d['sampleSize']
     TOPK = d['selectedClusterNumber']
     ELBOW = d['selectedNoiseReductionLvl']
@@ -70,7 +72,7 @@ def norce():
 
     norce_obj = NoRCE(filepath, time, best_epoch,
                       best_accuracy, T, SAMPLE_SIZE, TOPK, ELBOW)
-    results = norce_obj.run(featureIdx, attnRange)
+    results = norce_obj.run(featureIdx, attnRange, attnRatio=attnPercentile)
 
     # # batch
     # print('batch preprocessing')

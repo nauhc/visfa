@@ -13,7 +13,10 @@ export const UPDATE_SELECTED_GENDER = "UPDATE_SELECTED_GENDER";
 export const UPDATE_SELECTED_FEATURE_IDX = "UPDATE_SELECTED_FEATURE_IDX";
 export const UPDATE_SELECTED_MODEL = "UPDATE_SELECTED_MODEL";
 export const UPDATE_SELECTED_EPOCH = "UPDATE_SELECTED_EPOCH";
+export const UPDATE_ATTN_SWITCH_VALUE = "UPDATE_ATTN_SWITCH_VALUE";
 export const UPDATE_SELECTED_ATTN_RANGE = "UPDATE_SELECTED_ATTN_RANGE";
+export const UPDATE_SELECTED_ATTN_PERCENTILE =
+  "UPDATE_SELECTED_ATTN_PERCENTILE";
 export const UPDATE_SELECTED_MATRIX = "UPDATE_SELECTED_MATRIX";
 export const UPDATE_FEATURE_NUMBER = "UPDATE_FEATURE_NUMBER";
 export const UPDATE_CLUSTER_NUMBER = "UPDATE_CLUSTER_NUMBER";
@@ -39,6 +42,10 @@ export const updateSelectedFeatureIdx = createAction(
 export const updateSelectedModel = createAction(UPDATE_SELECTED_MODEL);
 export const updateSelectedEpoch = createAction(UPDATE_SELECTED_EPOCH);
 export const updateSelectedAttnRange = createAction(UPDATE_SELECTED_ATTN_RANGE);
+export const updateAttnSwitchValue = createAction(UPDATE_ATTN_SWITCH_VALUE);
+export const updateSelectedAttnPercentile = createAction(
+  UPDATE_SELECTED_ATTN_PERCENTILE
+);
 export const updateSelectedMatrix = createAction(UPDATE_SELECTED_MATRIX);
 export const updateFeatureNumber = createAction(UPDATE_FEATURE_NUMBER);
 export const updateClusterNumber = createAction(UPDATE_CLUSTER_NUMBER);

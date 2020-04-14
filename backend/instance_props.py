@@ -57,6 +57,29 @@ def attentionHistogram(attnCol):
     return result
 
 
+def attentionPercentileChart(attnCol):
+    result = []
+    previous = 0
+    for percent in np.arange(10, 101, 10):
+        v = np.around(np.percentile(attnCol, percent,
+                                    interpolation='nearest'), decimals=7)
+        attnRange = [previous, v]
+        previous = v
+        result.append({
+            'x': '%2d' % percent,
+            'Attn Value': attnRange
+        })
+    # previous = 0
+    # for percent in np.arange(10, 101, 10):
+    #     v = np.percentile(attnCol, percent, interpolation='nearest')
+    #     result.append({
+    #         'x': '%2d' % percent,
+    #         'Attn Value': v
+    #     })
+    # print('attentionPercentileChart', result)
+    return result
+
+
 def ageHistogram(ageCol):
     hist = np.histogram(ageCol, bins=np.unique(ageCol).tolist())
     result = []
@@ -219,6 +242,7 @@ def generatePropertyData(time, epoch, accuracy, instanceId, classId, gender, edu
 
     propVisData = {
         'attention': attentionHistogram(df['attn']),
+        'attentionPercentile': attentionPercentileChart(df['attn']),
         'age': ageHistogram(propertyDf['age']),
         'class': classHistogram(propertyDf['class']),
         'gender': genderHistogram(propertyDf['gender']),
