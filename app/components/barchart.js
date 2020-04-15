@@ -30,6 +30,7 @@ const defaultProps = {
   color: "#aaa",
   barWidth: 25,
   logscale: false,
+  clickedBar: [],
   onSelectName: () => {}
 };
 
@@ -55,12 +56,12 @@ class CustomizedAxisTick extends PureComponent {
 }
 
 class InteractiveBarChart extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      clickedBar: []
-    };
-  }
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     clickedBar: []
+  //   };
+  // }
 
   handleClick = e => {
     if (!e) {
@@ -71,7 +72,7 @@ class InteractiveBarChart extends React.Component {
       x: e.activeLabel,
       y: e.activePayload[0].value
     };
-    const { clickedBar } = this.state;
+    const { clickedBar } = this.props;
 
     // check if current click is in the clickedBar list
     const idx = clickedBar.map(o => o.x).indexOf(eObj.x);
@@ -83,10 +84,9 @@ class InteractiveBarChart extends React.Component {
       clickedBar.push(eObj);
     }
 
-    this.setState({
-      clickedBar
-    });
-
+    // this.setState({
+    //   clickedBar
+    // });
     this.props.onSelectName(clickedBar);
   };
 
@@ -102,13 +102,13 @@ class InteractiveBarChart extends React.Component {
       barkey,
       logscale,
       color,
-      barWidth
+      barWidth,
+      clickedBar
     } = this.props;
-    const { clickedBar } = this.state;
     if (!width || !height || !data || data.length === 0 || !xkey || !barkey) {
       return null;
     }
-
+    console.log("clickedBar", clickedBar);
     let borders = data.map(o => {
       return {
         color,
@@ -150,6 +150,7 @@ class InteractiveBarChart extends React.Component {
 
     return (
       <BarChart
+        key={id}
         width={width}
         height={height}
         data={data}

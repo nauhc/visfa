@@ -250,9 +250,9 @@ class NoRCE:
         rnnStr = self.t + '-%03dEpoch-%.2f' % (self.epoch, self.accuracy)
         featureIdxStr = '%02d' % (featureIdx)
         if len(attnRatio) != 0:
-            attnSelectStr = ('^').join([str(a) for a in attnRatio])
+            attnSelectStr = 'p' + ('^').join([str(a) for a in attnRatio])
         else:
-            attnSelectStr = ('-').join([str(a) for a in attnRange])
+            attnSelectStr = 'r' + ('-').join([str(a) for a in attnRange])
         sampleSizeStr = str(self.sample_size)
         elbowStr = '%.01f' % self.elbow
         topKStr = str(self.topk)
@@ -338,49 +338,8 @@ class NoRCE:
         maskedNeg = np.ma.array(neg_feature, mask=negAttnMask)
         neg = np.ma.filled(maskedNeg.astype(float), np.nan)
         # np.savetxt("negWithNan.csv", neg, delimiter=",", fmt="%s") #check
-        # return
-        print('pos.shape, neg.shape', pos.shape,
-              neg.shape)  # (990, 180) (1090, 180)
-        #
-        # # check pos neg matrices
-        # posCntOnT = []
-        # negCntOnT = []
-        # for i in range(pos.shape[1]):
-        #     posCntOnT.append(np.count_nonzero(~np.isnan(pos[:, i])))
-        #     negCntOnT.append(np.count_nonzero(~np.isnan(neg[:, i])))
-        # print(posCntOnT)  # [0, ... 0 , 665, 704]
-        # print(negCntOnT)  # [0, ... 0 , 110, 97]
-        #
-        # # return
-        # nonNanIdxPos = np.argwhere(~np.isnan(pos))
-        # print('pos ts', np.histogram(
-        #     nonNanIdxPos[:, 1], np.unique(nonNanIdxPos[:, 1])))
-        #
-        # nonNanIdxNeg = np.argwhere(~np.isnan(neg))
-        # print('neg ts', np.histogram(
-        #     nonNanIdxNeg[:, 1], np.unique(nonNanIdxNeg[:, 1])))
-        # posValues178 = []
-        # posValues179 = []
-        # for i in nonNanIdxPos:
-        #     posValues178.append(pos[i[0], 178])
-        #     posValues179.append(pos[i[0], 179])
-        # print('posValues178', posValues178)
-        # return
-        #
-        # negValues178 = []
-        # negValues179 = []
-        # for i in nonNanIdxNeg:
-        #     negValues178.append(neg[i[0], 178])
-        #     negValues179.append(neg[i[0], 179])
-        #
-        # print('posValues178', np.histogram(
-        #     posValues178, bins=np.unique(posValues178)))
-        # # print('posValues179', np.histogram(
-        # #     posValues179, bins=np.unique(posValues179)))
-        # # print('negValues', np.histogram(negValues, bins=np.unique(negValues)))
-        # # print('number of non nan in pos', np.count_nonzero(~np.isnan(pos)))
-        # # print('number of non nan in neg', np.count_nonzero(~np.isnan(neg)))
-        # return
+        # print('pos.shape, neg.shape', pos.shape,
+        #       neg.shape)  # (990, 180) (1090, 180)
 
         # fill nan with 0
         pos0fill = np.nan_to_num(pos)

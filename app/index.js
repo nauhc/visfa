@@ -35,6 +35,7 @@ import {
   getSequence,
   getSelectedAttnRange,
   getSelectedAttnPercentile,
+  getSelectedAttnPercentileSwitch,
   getSelectedFeatureNumber,
   getSelectedMatrixId
 } from "./selectors/base";
@@ -97,7 +98,7 @@ const mapStateToProps = state => ({
   selectedEpoch: state.selectedEpoch,
   selectedAttnRange: getSelectedAttnRange(state),
   selectedAttnPercentile: getSelectedAttnPercentile(state),
-  selectedAttnPercentileRep: state.selectedAttnPercentileRep,
+  selectedAttnPercentileSwitch: getSelectedAttnPercentileSwitch(state),
   selectedFeatureNumber: getSelectedFeatureNumber(state),
   selectedClusterNumber: state.selectedClusterNumber,
   estimatedClusterNumber: state.estimatedClusterNumber,
@@ -385,7 +386,8 @@ class App extends Component {
       selectedEpoch,
       updateSelectedEpoch,
       selectedAttnRange,
-      selectedAttnPercentileRep,
+      selectedAttnPercentile,
+      selectedAttnPercentileSwitch,
       updateAttnSwitchValue,
       updateLassoSelectedInstanceId,
       rankedFeatures,
@@ -533,9 +535,9 @@ class App extends Component {
               <FormControlLabel
                 control={
                   <Switch
-                    checked={selectedAttnPercentileRep}
+                    checked={selectedAttnPercentileSwitch}
                     onChange={(e, v) => updateAttnSwitchValue(v)}
-                    name="selectedAttnPercentileRep"
+                    name="selectedAttnPercentileSwitch"
                     color="primary"
                   />
                 }
@@ -543,7 +545,7 @@ class App extends Component {
               />
             </div>
             <div className="barchart-attn-container">
-              {selectedAttnPercentileRep ? (
+              {selectedAttnPercentileSwitch ? (
                 <AutoSizer>
                   {({ height, width }) => (
                     <InteractiveBarChart
@@ -556,6 +558,7 @@ class App extends Component {
                       logscale={true}
                       yTicks={[0.00001, 0.0001, 0.001, 0.01, 0.1, 1]}
                       color={"#82c0ee"}
+                      clickedBar={selectedAttnRange}
                       onSelectName={this.handleSelectingAttnPercentile}
                     />
                   )}
@@ -573,6 +576,7 @@ class App extends Component {
                       logscale={true}
                       yTicks={[0.1, 10, 1000, 100000]}
                       color={"#82c0ee"}
+                      clickedBar={selectedAttnPercentile}
                       onSelectName={this.handleSelectingAttnRange}
                     />
                   )}

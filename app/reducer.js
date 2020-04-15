@@ -42,7 +42,7 @@ const DEFAULT_STATE = {
   selectedEpoch: null,
   selectedAttnRange: [],
   selectedAttnPercentile: [],
-  selectedAttnPercentileRep: false,
+  selectedAttnPercentileSwitch: false,
   selectedLassoId: [],
   selectedMatrixId: null,
   selectedFeatureNumber: 15,
@@ -121,34 +121,25 @@ const handleUpdateSelectedAttnPercentileRepSwitchValue = (
 ) => {
   return {
     ...state,
-    selectedAttnPercentileRep: payload
+    selectedAttnPercentileSwitch: payload,
+    selectedAttnPercentile: [],
+    selectedAttnRange: []
   };
 };
 const handleUpdateSelectedAttnRange = (state, { payload }) => {
-  const attnRangeArr = flattenDeep(
-    payload
-      .map(o => {
-        // return o.split("-").map(s => parseFloat(s)); // both start and end
-        return parseFloat(o.x.split("-")[0]); // only start
-      })
-      .sort()
-  );
   return {
     ...state,
     // selectedAttnRange: flattenDeep(tmp).filter(unique)
-    selectedAttnPercentileRep: false,
-    selectedAttnRange: attnRangeArr
+    selectedAttnRange: payload
   };
 };
 
 const handleUpdateSelectedAttnPercentile = (state, { payload }) => {
-  // console.log("handleUpdateSelectedAttnPercentile", payload);
   // payload is array of objs: {x: xvalue, y: yvalue}
   // because frontend matrix calculation uses y value,
   // and backend sequence calculation uses x value, storing both
   return {
     ...state,
-    selectedAttnPercentileRep: true,
     selectedAttnPercentile: payload
   };
 };
