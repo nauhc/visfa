@@ -45,7 +45,7 @@ const DEFAULT_STATE = {
   selectedAttnPercentileSwitch: false,
   selectedLassoId: [],
   selectedMatrixId: null,
-  selectedFeatureNumber: 15,
+  selectedFeatureNumber: 16,
   selectedClusterNumber: 2,
   estimatedClusterNumber: null,
   selectedSequenceTimeBrush: [0, TEMPORAL_LENGTH - 1],

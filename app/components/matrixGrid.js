@@ -3,18 +3,28 @@
 import * as React from "react";
 import { render } from "react-dom";
 import MatrixGridPolygonLayer from "./matrix-grid-polygon-layer";
+import DoubleColorTintsLegends from "./legend";
 import DeckGL from "@deck.gl/react";
 import { OrthographicView } from "@deck.gl/core";
+import color from "@deck.gl/core/src/utils/color";
 import {
-  interpolateColorTintsRGB,
-  interpolatedColor,
-  flattenDeep
+  interpolateColorTints,
+  interpolateHexColors,
+  flattenDeep,
+  arrInRange
 } from "../utils";
 
 const DEFAULT_CELLL_SIZE = 10;
 const DEFAULT_MATRIX_INTERVAL = DEFAULT_CELLL_SIZE;
-const positiveColors = interpolateColorTintsRGB("#82ca9d");
-const negativeColors = interpolateColorTintsRGB("#8884d8");
+const positiveColor = "#82ca9d";
+const negativeColor = "#8884d8";
+
+// interpolateColorTints(hexcolor)
+// calculates the tints from percentage% to 100%
+// mapping from 'hexcolor' to white
+const positiveColorTints = interpolateColorTints(positiveColor);
+const negativeColorTints = interpolateColorTints(negativeColor);
+const { parseColor } = color;
 
 const defaultProps = {
   id: "matrixGrid",
@@ -46,6 +56,19 @@ class MatrixGrid extends React.Component {
     super();
   }
 
+  interpolateNegColor = percent => {
+    return interpolateHexColors(negativeColorTints, 1 - percent);
+  };
+  interpolatePosColor = percent => {
+    return interpolateHexColors(positiveColorTints, 1 - percent);
+  };
+
+  legendColors = (cnt, basecolors) => {
+    return arrInRange(cnt).map(i =>
+      interpolateHexColors(basecolors, 1 - i / cnt || 0.9)
+    );
+  };
+
   render() {
     const {
       width,
@@ -66,28 +89,37 @@ class MatrixGrid extends React.Component {
     //   .reduce((a, c) => a + c, 0);
     // const cell_size = Math.floor((width - 200) / (matrixInternalNum + cellNum));
 
-    const maxCnt = Math.max(
-      ...flattenDeep(
-        data.matrixGrid.map(mat => {
-          return mat.data.map(d => d.cnt);
-        })
-      )
+    const legendColorNumber = 20;
+    const negLegendColors = this.legendColors(
+      legendColorNumber,
+      negativeColorTints
     );
-    // console.log(maxCnt);
+    const posLegendColors = this.legendColors(
+      legendColorNumber,
+      positiveColorTints
+    );
+
+    const allCellValues = flattenDeep(
+      data.matrixGrid.map(mat => {
+        return mat.data.map(d => d.cnt);
+      })
+    );
+    const maxValue = Math.max(...allCellValues);
+    const minValue = Math.min(...allCellValues);
+    const posBase = maxValue > 0 ? Math.log10(maxValue) : 1;
+    const negBase = minValue < 0 ? Math.log10(-minValue) : 1;
 
     const viewState = {
       offset: [width / 2, height / 2],
       zoom: 0
     };
 
-    // const logMax = 300;
-    const base = Math.log10(maxCnt);
     const matrixGridLayer = new MatrixGridPolygonLayer({
       id: `matrix-grid-layer`,
       data: data,
       layout: {
         x: -width / 2 + 220,
-        y: -height / 2 + 105,
+        y: -height / 2 + 150,
         cx: cx,
         cy: cy,
         dx: dx,
@@ -95,22 +127,56 @@ class MatrixGrid extends React.Component {
       },
       getColor: d =>
         d.v >= 0
-          ? interpolatedColor(positiveColors, Math.log10(d.v) / base)
-          : interpolatedColor(negativeColors, Math.log10(-d.v) / base),
+          ? parseColor(
+              interpolateHexColors(
+                positiveColorTints,
+                1 - Math.log10(d.v) / posBase
+              )
+            )
+          : parseColor(
+              interpolateHexColors(
+                negativeColorTints,
+                1 - Math.log10(-d.v) / negBase
+              )
+            ),
       onClick: onSelectMatrix
     });
 
     return (
-      <div className="matrix-grid-view-container">
-        <DeckGL
-          width={width}
-          height={height}
-          viewState={viewState}
-          // onViewStateChange={({ viewState }) => this.setState({ viewState })}
-          // style={{ border: "1px solid black" }}
-          views={[glView]}
-          layers={[matrixGridLayer]}
-        />
+      <div
+        className="matrix-grid-legend-container"
+        style={{ display: "grid", gridTemplateRows: "20px auto" }}
+      >
+        <div
+          id="matrix-legend"
+          style={{
+            marginLeft: "220px",
+            display: "grid",
+            gridTemplateColumns: "150px auto"
+          }}
+        >
+          <h4 id="legend-label" style={{ color: "#666", marginTop: "0" }}>
+            {"Instance Count"}
+          </h4>
+          <div className="legend">
+            <DoubleColorTintsLegends
+              colorNumber={legendColorNumber}
+              leftLegendColors={negLegendColors}
+              rightLegendColors={posLegendColors}
+            />
+          </div>
+        </div>
+        <div id="matrix-grid">
+          <DeckGL
+            width={width}
+            height={height}
+            viewState={viewState}
+            // onViewStateChange={({ viewState }) => this.setState({ viewState })}
+            // style={{ border: "1px solid black" }}
+            views={[glView]}
+            layers={[matrixGridLayer]}
+          />
+        </div>
       </div>
     );
   }

@@ -32,16 +32,24 @@ export const interpolateColorTintsRGB = color => {
 
 export const interpolateColorTints = color => {
   const valuescolor = new Values(color);
-  return valuescolor.tints(1).map(t => t.hex);
+  const percentage = 1;
+  // calculate the tints from percentage% to 100%
+  // mapping from 'color' to white
+  return valuescolor.tints(percentage).map(t => t.hex);
 };
 
-export const interpolatedColor = (colors, v) => {
+export const interpolateHexColors = (colors, v) => {
+  // v is between [0, 1], mapping colors[0] to color[length-1]
+  return v <= 0
+    ? "#" + colors[0]
+    : v >= 1
+      ? "#FAFAFA"
+      : "#" + colors[Math.floor(v * 100)];
+};
+
+export const interpolatedRGBColor = (colors, v) => {
   if (v <= 0) {
-    if (Values.Utils.isHEX(colors[0])) {
-      return colors[97];
-    } else {
-      return [250, 250, 250];
-    }
+    return [250, 250, 250];
   } else if (v >= 1) {
     return colors[0];
   } else {
@@ -218,16 +226,11 @@ export const mean = arr => sum(arr) / arr.length;
 
 export const mean2Way = arr => {
   const minn = Math.min(...arr);
+  const neg = arr.filter(x => x < 0);
+  const pos = arr.filter(x => x >= 0);
 
-  if (minn < 0) {
-    const neg = arr.filter(x => x < 0);
-    const pos = arr.filter(x => x >= 0);
-    if (!pos.length) {
-      return -mean(neg).toFixed(4);
-    }
-    return (mean(pos) - mean(neg)).toFixed(4);
-  }
-  return mean(arr);
+  return mean(pos) + Math.abs(mean(neg));
+  // return mean(arr);
 };
 
 export const entropy = arr => {
@@ -236,9 +239,10 @@ export const entropy = arr => {
     (freq, c) => (freq[c] = (freq[c] || 0) + 1) && freq,
     {}
   );
-  return Object.values(frequencies)
-    .reduce((sum, f) => sum - (f / len) * Math.log2(f / len), 0)
-    .toFixed(4);
+  return Object.values(frequencies).reduce(
+    (sum, f) => sum - (f / len) * Math.log2(f / len),
+    0
+  );
 };
 
 export const featuresWeightsNSort = (
@@ -270,7 +274,9 @@ export const featuresWeightsNSort = (
     // console.log(attr);
     // console.log("arr", arr);
     // const weight = mean2Way(arr) * entropy(arr);
-    const weight = mean2Way(arr) * variance(arr);
+    // const weight = mean2Way(arr) * variance(arr);
+    const weight = mean2Way(arr);
+    // console.log(mean2Way(arr), variance(arr));
     return {
       ...attr,
       weight

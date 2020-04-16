@@ -153,6 +153,11 @@ body {
   grid-column-start: 1;
   grid-column-end: 2;
 }
+/* .matrix-legend { // right next to "Matrix Grid"
+  position: relative;
+  grid-column-start: 2;
+  grid-column-end: 3;
+} */
 .feature-number-selector-container {
   position: relative;
   top: 5px;
@@ -161,13 +166,12 @@ body {
   grid-column-start: 1;
   grid-column-end: 2;
 }
-.matrix-grid-container {
+.matrix-grid-view-container {
   grid-column-start: 1;
   grid-column-end: 4;
   grid-row-start: 2;
   grid-row-end: 5;
 }
-
 /* ---- Sequence View --- */
 .sequence-view-container {
   width: 100%;

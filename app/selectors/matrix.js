@@ -42,7 +42,7 @@ export const getRankedFeatures = createSelector(
       attn1Vecs,
       "difference"
     );
-
+    // console.log("rankedFeatures", rankedFeatures);
     return rankedFeatures;
   }
 );

@@ -593,6 +593,7 @@ class App extends Component {
             <h3 style={{ color: "#666" }} className="matrix-grid-title">
               Matrix Grid
             </h3>
+
             <div className="feature-number-selector-container">
               <InputLabel id="select-text">Feature No.</InputLabel>
               <Select
@@ -611,7 +612,7 @@ class App extends Component {
               </Select>
             </div>
 
-            <div className="matrix-grid-container">
+            <div className="matrix-grid-view-container">
               <AutoSizer>
                 {({ height, width }) => {
                   if (!height || !width) {

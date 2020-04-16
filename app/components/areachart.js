@@ -11,7 +11,7 @@ import {
   Brush
   // ResponsiveContainer
 } from "recharts";
-import { arrInRange, interpolatedColor } from "../utils";
+import { arrInRange, interpolateHexColors } from "../utils";
 import { scaleLog } from "d3-scale";
 
 export default class InteractiveAreaChart extends PureComponent {
@@ -142,9 +142,9 @@ export default class InteractiveAreaChart extends PureComponent {
               <YAxis domain={[areaChartYMin, areaChartYMax]} />
               <Tooltip wrapperStyle={{ top: 20 }} />
               {arrInRange(areaChartAreaKeyList.length).map(i => {
-                let c = interpolatedColor(colors, 0);
+                let c = interpolateHexColors(colors, 0);
                 if (i > 0)
-                  c = interpolatedColor(
+                  c = interpolateHexColors(
                     colors,
                     1 - i / areaChartAreaKeyList.length
                   );

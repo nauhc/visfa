@@ -244,9 +244,9 @@ class NoRCE:
             dump(dict, fp)
 
     def run(self, featureIdx, attnRange, attnRatio=None):
-        #   ------- LOAD DATA AND RESHAPE -------
+        #  ========== LOAD DATA, RESHAPE & FILTERING ===========
         # column [0:3] are 0:'attn', 1:'class', 2:'posId', 3:'seqId'
-        # column [4:] are 34 dimensional vector
+        # column [4:] are feature-length dimensional vector
         rnnStr = self.t + '-%03dEpoch-%.2f' % (self.epoch, self.accuracy)
         featureIdxStr = '%02d' % (featureIdx)
         if len(attnRatio) != 0:
@@ -262,16 +262,15 @@ class NoRCE:
         arr = np.load(self.path + '/vis_data/' + fn)
         # print('arr.shape', arr.shape)  # (374400, 20) 'attn', 'class', 'posId', 'seqId', vecs...
 
-        #   -------- FILTER ATTENTION (EVENTS) -----------
-        #   --- Divide data into ten attention ranges
-        #   --- and save to file if not done before
-        #   ------- IF NOT DONE BEFORE, SAVE TO FILE -------
+        #  --- save attnRange and attenRatio portions (idx) ---
+        #  --- to file if not yet ---
         dir = self.path + 'mid_data/'
         filteredAttnFN = dir + fn.replace('.npy', '_portion_idx.json')
         if not path.exists(filteredAttnFN):
             self.attnPortionsSaveFile(arr, filteredAttnFN)
         with open(filteredAttnFN, 'r') as f:
             attnPortionIdx = load(f)
+        # print(attnPortionIdx.keys())  # ["0.0", "0.1" ..., "0.9"]
 
         filteredAttnPercentFN = dir + fn.replace('.npy', '_percents_idx.json')
         if not path.exists(filteredAttnPercentFN):
@@ -279,9 +278,7 @@ class NoRCE:
         with open(filteredAttnPercentFN, 'r') as f:
             attnPercentileIdx = load(f)
 
-        # print(attnPortionIdx.keys())  # ["0.0", "0.1" ..., "0.9"]
-
-        #   --- Reshape and save DATA to file if not saved before -----
+        #   --- Reshape data and save reshaped to file if not yet ----
         reshapedAttnFN = dir + 'reshaped_' + fn
         if not path.exists(reshapedAttnFN):
             print('\nRESHAPING ATTENTION DATA')
@@ -299,54 +296,61 @@ class NoRCE:
             posNegIdx = load(f)
         posIdx = posNegIdx['pos']  # len: 990
         negIdx = posNegIdx['neg']  # len: 1090
-        # print('posIdx', len(posIdx), posIdx[:10])  # 12894 [0,1,2, ...]
-        # print('negIdx', len(negIdx), negIdx[:10])  # 12706 [12894, 12895, ...]
-        #   ------- LOAD DATA, FILTER ATTENTION, AND RESHAPE (SAVE TO FILE) -------
+        # print('posIdx', len(posIdx), posIdx[:10])  # 990 [1, 3, 6, 10, 11, ...
+        # print('negIdx', len(negIdx), negIdx[:10])  # 1090 [0, 2, 4, 5, 7, 8 ...
 
-        # ---- DONE DATA PREPARATION ----
-
-        #   --- Get the indices according to the selected attnRange
-        instancebytime = len(arr)
-        # shape (instance x time, 1)
-        nanMask = np.array([False for i in range(instancebytime)])
-        selectedAttnIdx = []
-        if len(attnRatio) != 0:
-            for attnStart in attnRatio:
-                selectedAttnIdx += attnPercentileIdx['%.1f' % attnStart]
-        elif len(attnRange) != 0:
-            for attnStart in attnRange:
-                # print(attnPortionIdx[str(attnStart)])
-                selectedAttnIdx += attnPortionIdx['%.1f' % attnStart]
-
-        restIdx = list(set(range(instancebytime)) - set(selectedAttnIdx))
-        # print('restIdx', len(restIdx))
-        nanMask[restIdx] = True
-        reshapedNanMask = np.reshape(
-            nanMask, (instancebytime // self.T, self.T))
-        # print('nanMask.shape', nanMask.shape)  # (374400,)
-        # print('reshapedNanMask.shape', reshapedNanMask.shape)  # (2080, 180)
-
-        # #   ------- SET VALUES not in AttnRange to Nan --------
+        #   -------- FILTER ATTENTION (EVENTS) -----------
+        #   --- Divide data into ten attention ranges
+        #   --- and save to file if not done before
+        #   ------- IF NOT DONE BEFORE, SAVE TO FILE -------
+        #   --- Get the indices according to the selected attnRange or attnRatio
         pos_feature = reshapedAttn[:, :, featureIdx][posIdx]
-        posAttnMask = reshapedNanMask[posIdx]
-        maskedPos = np.ma.array(pos_feature, mask=posAttnMask)
-        pos = np.ma.filled(maskedPos.astype(float), np.nan)
-        # np.savetxt("posWithNan.csv", pos, delimiter=",", fmt="%s") #check
-
         neg_feature = reshapedAttn[:, :, featureIdx][negIdx]
-        negAttnMask = reshapedNanMask[negIdx]
-        maskedNeg = np.ma.array(neg_feature, mask=negAttnMask)
-        neg = np.ma.filled(maskedNeg.astype(float), np.nan)
-        # np.savetxt("negWithNan.csv", neg, delimiter=",", fmt="%s") #check
-        # print('pos.shape, neg.shape', pos.shape,
-        #       neg.shape)  # (990, 180) (1090, 180)
 
-        # fill nan with 0
-        pos0fill = np.nan_to_num(pos)
-        neg0fill = np.nan_to_num(neg)
-        print('pos0fill.shape', pos0fill.shape)
-        print('neg0fill.shape', neg0fill.shape)
-        # --------- DATA LOADING AND RESHAPE END.  --------
+        if (len(attnRatio) == 0 and len(attnRange) == 0):
+            pos = pos_feature
+            neg = neg_feature
+            pos0fill = pos_feature
+            neg0fill = neg_feature
+        else:
+            selectedAttnIdx = []
+            if len(attnRatio) != 0:
+                for attnStart in attnRatio:
+                    selectedAttnIdx += attnPercentileIdx['%.1f' % attnStart]
+            elif len(attnRange) != 0:
+                for attnStart in attnRange:
+                    # print(attnPortionIdx[str(attnStart)])
+                    selectedAttnIdx += attnPortionIdx['%.1f' % attnStart]
+            instancebytime = len(arr)
+            # shape (instance x time, 1)
+            nanMask = np.array([False for i in range(instancebytime)])
+            restIdx = list(set(range(instancebytime)) - set(selectedAttnIdx))
+            # print('restIdx', len(restIdx))
+            nanMask[restIdx] = True
+            reshapedNanMask = np.reshape(
+                nanMask, (instancebytime // self.T, self.T))
+            # print('nanMask.shape', nanMask.shape)  # (374400,)
+            # print('reshapedNanMask.shape', reshapedNanMask.shape)  # (2080, 180)
+
+            # #   ------- SET VALUES not in AttnRange to Nan --------
+            posAttnMask = reshapedNanMask[posIdx]
+            maskedPos = np.ma.array(pos_feature, mask=posAttnMask)
+            pos = np.ma.filled(maskedPos.astype(float), np.nan)
+            # np.savetxt("posAfterAttnFitering.csv", pos, delimiter=",", fmt="%s") #check
+
+            negAttnMask = reshapedNanMask[negIdx]
+            maskedNeg = np.ma.array(neg_feature, mask=negAttnMask)
+            neg = np.ma.filled(maskedNeg.astype(float), np.nan)
+            # np.savetxt("negAfterAttnFitering.csv", neg, delimiter=",", fmt="%s") #check
+            # print('pos.shape, neg.shape', pos.shape,
+            #       neg.shape)  # (990, 180) (1090, 180)
+
+            # fill nan with 0
+            pos0fill = np.nan_to_num(pos)
+            neg0fill = np.nan_to_num(neg)
+            print('pos0fill.shape', pos0fill.shape)
+            print('neg0fill.shape', neg0fill.shape)
+        # =========== DATA LOADING, RESHAPE & FILTERING END. ===========
 
         # ---------- DATA SAMPLING ------
         # # sample for fair comparison and scalability
