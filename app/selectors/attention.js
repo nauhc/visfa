@@ -71,8 +71,6 @@ export const getAttnRangeFilteredAttention = createSelector(
 export const getAttentionByClass = createSelector(
   getAttnRangeFilteredAttention,
   attention => {
-    console.log("getAttentionByClass", attention);
-
     if (!attention || attention.length === 0) {
       return null;
     }

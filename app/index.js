@@ -558,7 +558,7 @@ class App extends Component {
                       logscale={true}
                       yTicks={[0.00001, 0.0001, 0.001, 0.01, 0.1, 1]}
                       color={"#82c0ee"}
-                      clickedBar={selectedAttnRange}
+                      clickedBar={selectedAttnPercentile}
                       onSelectName={this.handleSelectingAttnPercentile}
                     />
                   )}
@@ -576,7 +576,7 @@ class App extends Component {
                       logscale={true}
                       yTicks={[0.1, 10, 1000, 100000]}
                       color={"#82c0ee"}
-                      clickedBar={selectedAttnPercentile}
+                      clickedBar={selectedAttnRange}
                       onSelectName={this.handleSelectingAttnRange}
                     />
                   )}

@@ -74,20 +74,12 @@ class InteractiveBarChart extends React.Component {
     };
     const { clickedBar } = this.props;
 
-    // check if current click is in the clickedBar list
-    const idx = clickedBar.map(o => o.x).indexOf(eObj.x);
-    if (idx > -1) {
-      // if in the list, remove
-      clickedBar.splice(idx, 1);
-    } else {
-      // if not in the list, add to the list
-      clickedBar.push(eObj);
-    }
+    const match = clickedBar.find(b => b.x === eObj.x);
+    const clicked = match
+      ? clickedBar.filter(b => b.x !== eObj.x)
+      : clickedBar.concat(eObj);
 
-    // this.setState({
-    //   clickedBar
-    // });
-    this.props.onSelectName(clickedBar);
+    this.props.onSelectName(clicked);
   };
 
   render() {
@@ -108,7 +100,6 @@ class InteractiveBarChart extends React.Component {
     if (!width || !height || !data || data.length === 0 || !xkey || !barkey) {
       return null;
     }
-    console.log("clickedBar", clickedBar);
     let borders = data.map(o => {
       return {
         color,
