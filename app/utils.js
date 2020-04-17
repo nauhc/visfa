@@ -35,16 +35,12 @@ export const interpolateColorTints = color => {
   const percentage = 1;
   // calculate the tints from percentage% to 100%
   // mapping from 'color' to white
-  return valuescolor.tints(percentage).map(t => t.hex);
+  return valuescolor.tints(percentage).map(t => "#" + t.hex);
 };
 
 export const interpolateHexColors = (colors, v) => {
   // v is between [0, 1], mapping colors[0] to color[length-1]
-  return v <= 0
-    ? "#" + colors[0]
-    : v >= 1
-      ? "#FAFAFA"
-      : "#" + colors[Math.floor(v * 100)];
+  return v <= 0 ? colors[0] : v >= 1 ? "#FAFAFA" : colors[Math.floor(v * 100)];
 };
 
 export const interpolatedRGBColor = (colors, v) => {

@@ -40,7 +40,6 @@ export default class InteractiveAreaChart extends PureComponent {
   };
 
   handleClick = e => {
-    // const name = e.
     if (!e) {
       return;
     }
@@ -126,7 +125,7 @@ export default class InteractiveAreaChart extends PureComponent {
               <YAxis scale="log" domain={[0.1, "auto"]} allowDataOverflow />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <Tooltip />
-              <Bar dataKey={countBarChartDataYkey} fill={`#${colors[0]}`} />
+              <Bar dataKey={countBarChartDataYkey} fill={`${colors[0]}`} />
             </BarChart>
           </div>
           <div className={`${id}-areachart`}>
@@ -154,8 +153,8 @@ export default class InteractiveAreaChart extends PureComponent {
                     type="monotone"
                     dataKey={areaChartAreaKeyList[i]}
                     stackId="1"
-                    stroke={`#${colors[0]}`}
-                    fill={`#${c}`}
+                    stroke={`${colors[0]}`}
+                    fill={`${c}`}
                     isAnimationActive={animation}
                   />
                 );
@@ -203,7 +202,7 @@ export default class InteractiveAreaChart extends PureComponent {
             <Bar
               dataKey={barChartYkey}
               barSize={height * 0.3}
-              fill={`#${colors[0]}`}
+              fill={`${colors[0]}`}
             />
           </BarChart>
         </div>
