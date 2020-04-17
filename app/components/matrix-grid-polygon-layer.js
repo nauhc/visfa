@@ -112,6 +112,7 @@ class MatrixGridPolygonLayer extends CompositeLayer {
       matrix.data.forEach(cell => {
         polygonCells.push({
           id: cell.id,
+          lower: matrix.rowIdx >= matrix.colIdx, // lower matrix or upper matrix
           xx: x + matOffsetX + matrix.colIdxDict[cell.colId] * cx,
           yy: y + matOffsetY + matrix.rowIdxDict[cell.rowId] * cy,
           v: cell.cnt

@@ -56,13 +56,6 @@ class MatrixGrid extends React.Component {
     super();
   }
 
-  interpolateNegColor = percent => {
-    return interpolateHexColors(negativeColorTints, 1 - percent);
-  };
-  interpolatePosColor = percent => {
-    return interpolateHexColors(positiveColorTints, 1 - percent);
-  };
-
   legendColors = (cnt, basecolors) => {
     return arrInRange(cnt).map(i =>
       interpolateHexColors(basecolors, 1 - i / cnt || 0.9)
@@ -99,16 +92,32 @@ class MatrixGrid extends React.Component {
       positiveColorTints
     );
 
-    const allCellValues = flattenDeep(
-      data.matrixGrid.map(mat => {
-        return mat.data.map(d => d.cnt);
-      })
-    );
-    const maxValue = Math.max(...allCellValues);
-    const minValue = Math.min(...allCellValues);
-    const posBase = maxValue > 0 ? Math.log10(maxValue) : 1;
-    const negBase = minValue < 0 ? Math.log10(-minValue) : 1;
+    let upperMatCellValues = [],
+      lowerMatCellValues = [];
+    data.matrixGrid.forEach(mat => {
+      if (mat.rowIdx >= mat.colIdx) {
+        // lower
+        lowerMatCellValues = lowerMatCellValues.concat(
+          mat.data.map(d => d.cnt)
+        );
+      } else {
+        //upper
+        upperMatCellValues = upperMatCellValues.concat(
+          mat.data.map(d => d.cnt)
+        );
+      }
+    });
 
+    //upper triangular matrices
+    const upperMaxValue = Math.max(...upperMatCellValues);
+    const upperMinValue = Math.min(...upperMatCellValues);
+    const upperPosBase = upperMaxValue > 0 ? Math.log10(upperMaxValue) : 1;
+    const upperNegBase = upperMinValue < 0 ? Math.log10(-upperMinValue) : 1;
+    // lower triangular matrices
+    const lowerMaxValue = Math.max(...lowerMatCellValues);
+    const lowerMinValue = Math.min(...lowerMatCellValues);
+    const lowerPosBase = lowerMaxValue > 0 ? Math.log10(lowerMaxValue) : 1;
+    const lowerNegBase = lowerMinValue < 0 ? Math.log10(-lowerMinValue) : 1;
     const viewState = {
       offset: [width / 2, height / 2],
       zoom: 0
@@ -126,19 +135,34 @@ class MatrixGrid extends React.Component {
         dy: dy
       },
       getColor: d =>
-        d.v >= 0
-          ? parseColor(
-              interpolateHexColors(
-                positiveColorTints,
-                1 - Math.log10(d.v) / posBase
+        d.lower
+          ? d.v >= 0
+            ? parseColor(
+                interpolateHexColors(
+                  positiveColorTints,
+                  1 - Math.log10(d.v) / lowerPosBase
+                )
               )
-            )
-          : parseColor(
-              interpolateHexColors(
-                negativeColorTints,
-                1 - Math.log10(-d.v) / negBase
+            : parseColor(
+                interpolateHexColors(
+                  negativeColorTints,
+                  1 - Math.log10(-d.v) / lowerNegBase
+                )
               )
-            ),
+          : d.v >= 0
+            ? parseColor(
+                interpolateHexColors(
+                  positiveColorTints,
+                  1 - Math.log10(d.v) / upperPosBase
+                )
+              )
+            : parseColor(
+                interpolateHexColors(
+                  negativeColorTints,
+                  1 - Math.log10(-d.v) / upperNegBase
+                )
+              ),
+
       onClick: onSelectMatrix
     });
 
