@@ -430,7 +430,7 @@ class App extends Component {
         <div className="property-view-container">
           <div className="instance-view-container">
             <h2 style={{ color: "#444" }} className="instance-view-title">
-              Patient Property
+              Student Property
             </h2>
             <div className="projection-view-container">
               <h3 style={{ color: "#666" }} className="projection-view-title">
@@ -587,13 +587,12 @@ class App extends Component {
         </div>
         <div className="summary-view-container">
           <h2 style={{ color: "#444" }} className="summary-view-title">
-            Patient Feature Attribution Summary
+            Student Feature Attribution Summary
           </h2>
           <div className="summaryvis-view-container">
             <h3 style={{ color: "#666" }} className="matrix-grid-title">
               Matrix Grid
             </h3>
-
             <div className="feature-number-selector-container">
               <InputLabel id="select-text">Feature No.</InputLabel>
               <Select
