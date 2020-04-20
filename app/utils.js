@@ -210,6 +210,11 @@ export const switchMatrixOption = (
   }
 };
 
+export const roundup2ZeroEnds = n => {
+  const base = Math.pow(10, Math.floor(Math.log10(n)));
+  return Math.ceil(n / base) * base;
+};
+
 export const sum = arr => {
   return arr.reduce((a, b) => a + b, 0);
 };

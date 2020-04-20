@@ -11,7 +11,8 @@ import {
   interpolateColorTints,
   interpolateHexColors,
   flattenDeep,
-  arrInRange
+  arrInRange,
+  roundup2ZeroEnds
 } from "../utils";
 
 const DEFAULT_CELLL_SIZE = 10;
@@ -116,8 +117,10 @@ class MatrixGrid extends React.Component {
     // lower triangular matrices
     const lowerMaxValue = Math.max(...lowerMatCellValues);
     const lowerMinValue = Math.min(...lowerMatCellValues);
-    const lowerPosBase = lowerMaxValue > 0 ? Math.log10(lowerMaxValue) : 1;
+    const lowerPosBase =
+      lowerMaxValue > 0 ? Math.log10(roundup2ZeroEnds(lowerMaxValue)) : 1;
     const lowerNegBase = lowerMinValue < 0 ? Math.log10(-lowerMinValue) : 1;
+
     const viewState = {
       offset: [width / 2, height / 2],
       zoom: 0
