@@ -140,12 +140,14 @@ class MatrixGrid extends React.Component {
       getColor: d =>
         d.lower
           ? d.v >= 0
-            ? parseColor(
-                interpolateHexColors(
-                  positiveColorTints,
-                  1 - Math.log10(d.v) / lowerPosBase
+            ? d.v === 0
+              ? [250, 250, 250, 255]
+              : parseColor(
+                  interpolateHexColors(
+                    positiveColorTints,
+                    1 - Math.log10(d.v) / lowerPosBase
+                  )
                 )
-              )
             : parseColor(
                 interpolateHexColors(
                   negativeColorTints,
@@ -153,19 +155,20 @@ class MatrixGrid extends React.Component {
                 )
               )
           : d.v >= 0
-            ? parseColor(
-                interpolateHexColors(
-                  positiveColorTints,
-                  1 - Math.log10(d.v) / upperPosBase
+            ? d.v === 0
+              ? [250, 250, 250, 255]
+              : parseColor(
+                  interpolateHexColors(
+                    positiveColorTints,
+                    1 - Math.log10(d.v) / upperPosBase
+                  )
                 )
-              )
             : parseColor(
                 interpolateHexColors(
                   negativeColorTints,
                   1 - Math.log10(-d.v) / upperNegBase
                 )
               ),
-
       onClick: onSelectMatrix
     });
 
