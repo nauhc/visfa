@@ -226,10 +226,8 @@ export const variance = arr => {
 export const mean = arr => sum(arr) / arr.length;
 
 export const mean2Way = arr => {
-  const minn = Math.min(...arr);
   const neg = arr.filter(x => x < 0);
   const pos = arr.filter(x => x >= 0);
-
   return mean(pos) + Math.abs(mean(neg));
   // return mean(arr);
 };

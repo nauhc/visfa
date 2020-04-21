@@ -250,9 +250,11 @@ class NoRCE:
         rnnStr = self.t + '-%03dEpoch-%.2f' % (self.epoch, self.accuracy)
         featureIdxStr = '%02d' % (featureIdx)
         if len(attnRatio) != 0:
-            attnSelectStr = 'p' + ('^').join([str(a) for a in attnRatio])
+            attnSelectStr = 'p' + ('^').join([str(a)
+                                              for a in sorted(attnRatio)])
         else:
-            attnSelectStr = 'r' + ('-').join([str(a) for a in attnRange])
+            attnSelectStr = 'r' + ('-').join([str(a)
+                                              for a in sorted(attnRange)])
         sampleSizeStr = str(self.sample_size)
         elbowStr = '%.01f' % self.elbow
         topKStr = str(self.topk)
