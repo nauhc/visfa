@@ -476,6 +476,7 @@ class App extends Component {
                           xkey={"x"}
                           barkey={"Inst Cnt"}
                           color={genderColor}
+                          clickedBar={selectedGender}
                           onSelectName={this.handleUpdateGenderSelection}
                         />
                       )}
@@ -497,6 +498,7 @@ class App extends Component {
                           xkey={"x"}
                           barkey={"Inst Cnt"}
                           color={classColor}
+                          clickedBar={selectedClass}
                           onSelectName={this.handleUpdateClassSelection}
                         />
                       )}
@@ -519,6 +521,7 @@ class App extends Component {
                         xkey={"x"}
                         barkey={"Inst Cnt"}
                         color={eduColor}
+                        clickedBar={selectedEdu}
                         onSelectName={this.handleUpdateEduSelection}
                       />
                     )}
