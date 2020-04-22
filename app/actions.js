@@ -59,7 +59,7 @@ export const closeSequenceView = createAction(CLOSE_SEQUENCE_VIEW);
 // thunk async call
 export const updateAndFetchProperty = data => {
   return dispatch => {
-    fetch("http://localhost:5000/visfa", {
+    fetch("http://localhost:5050/visfa", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -78,7 +78,7 @@ export const updateAndFetchProperty = data => {
 
 export const updateAndFetchSequences = data => {
   return dispatch => {
-    fetch("http://localhost:5000/norce", {
+    fetch("http://localhost:5050/norce", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

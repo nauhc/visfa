@@ -224,7 +224,7 @@ def generatePropertyData(time, epoch, accuracy, instanceId, classId, gender, edu
     df = pd.read_csv(visFilePath + orgCsvFN)
     # 374400 x ['attn', 'class', 'posId', 'seqId', 'vec']
 
-    propFN = visFilePath + orgCsvFN.replace('.csv', '_props.csv')
+    propFN = visFilePath + 'checkpoint-' + time + '_props.csv'
     if not path.exists(propFN):
         print('\n --- property file not found, generating new ---\n')
         dataFN = './data/oulad/training_data/FFF_2013J_data.npy'

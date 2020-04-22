@@ -15,11 +15,24 @@ CORS(app)
 # best_epoch = 23
 # best_accuracy = 0.89
 
-time = '20200409-061253'
-best_epoch = 23
-best_accuracy = 0.88
 filepath = './data/oulad/'
 T = 180
+time = '20200409-061253'
+# # best
+# epoch = 23
+# accuracy = 0.88
+# #
+# epoch = 13
+# accuracy = 0.85
+# #
+# epoch = 8
+# accuracy = 0.84
+# #
+epoch = 2
+accuracy = 0.79
+# #
+# epoch = 0
+# accuracy = 0.61
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -39,12 +52,12 @@ def visfa():
     selectedEdu = d['selectedEdu']
 
     propertyVisData = generatePropertyData(
-        time, best_epoch, best_accuracy, selectedInstanceId, selectedClass, selectedGender, selectedEdu)
+        time, epoch, accuracy, selectedInstanceId, selectedClass, selectedGender, selectedEdu)
     print('\nDone generating property data.')
     return jsonify(propertyVisData)
 
     # sampledPropertyVisData = sampledPropertyData(
-    #     time, best_epoch, best_accuracy, 0.05, selectedInstanceId, selectedClass, selectedGender, selectedAge)
+    #     time, epoch, accuracy, 0.05, selectedInstanceId, selectedClass, selectedGender, selectedAge)
     # print('\nDone generating sampled property data.')
     #
     # return jsonify(sampledPropertyVisData)
@@ -72,23 +85,13 @@ def norce():
     print('attnPercentile', attnPercentile)
     print('topK', TOPK)
 
-    norce_obj = NoRCE(filepath, time, best_epoch,
-                      best_accuracy, T, SAMPLE_SIZE, TOPK, ELBOW)
+    norce_obj = NoRCE(filepath, time, epoch,
+                      accuracy, T, SAMPLE_SIZE, TOPK, ELBOW)
     results = norce_obj.run(featureIdx, attnRange, attnRatio=attnPercentile)
 
-    # # batch
-    # print('batch preprocessing')
-    # for elbow in [0, 0.1, 0.2, 0.3]:
-    #     for topk in [1, 2, 3, 4, 5]:
-    #         norce_obj = NoRCE(filepath, time, best_epoch,
-    #                           best_accuracy, T, SAMPLE_SIZE, topk, elbow)
-    #         results = norce_obj.run(featureIdx, attnRange)
-
     # print('\nresults\n', results)
-
-    # return jsonify({'abc': 'ddd', 'bbd': 'ccc'})
     return jsonify(results)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5050)

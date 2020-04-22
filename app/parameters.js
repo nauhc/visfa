@@ -103,7 +103,7 @@ export const FEATURES = [
   {
     range: [0, 3, 4],
     originalName: "repeatactivity",
-    name: "LinksToEarly Contents",
+    name: "Links To Early Contents",
     bins: [0.0, 3.0, 4.0]
   },
   {

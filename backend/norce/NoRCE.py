@@ -249,7 +249,7 @@ class NoRCE:
         # column [4:] are feature-length dimensional vector
         rnnStr = self.t + '-%03dEpoch-%.2f' % (self.epoch, self.accuracy)
         featureIdxStr = '%02d' % (featureIdx)
-        if len(attnRatio) != 0:
+        if len(attnRatio) != 0 and attnRatio:
             attnSelectStr = 'p' + ('^').join([str(a)
                                               for a in sorted(attnRatio)])
         else:
