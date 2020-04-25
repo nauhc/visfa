@@ -96,7 +96,8 @@ class NoRCE:
                 cluster.append(np.nan)
         return cluster
 
-    def percentileVisData(self, cluster, percents, withNan):
+
+def percentileVisData(self, cluster, percents, withNan):
         # percentile arr
         if withNan:
             tCnt = len(cluster)
@@ -109,16 +110,19 @@ class NoRCE:
                 [np.percentile(values, p, interpolation='nearest') for p in percents])
         percentileArr = np.around(np.array(percentileArr), 4)
         percentileArr = np.nan_to_num(percentileArr)
-        # print('percentileArr', percentileArr.shape)  # (48, 6)
-        # print(percentileArr)
+        print('percentileArr', percentileArr.shape)
 
-        percentileDF = pd.DataFrame(percentileArr, index=[
-            'T' + str(i) for i in range(percentileArr.shape[0])],
+        firstCol = percentileArr[:, 0].reshape(tCnt, 1)
+        stackedPercentile = np.concatenate(
+            (firstCol, np.diff(percentileArr, axis=1)), axis=1)
+        print('stackedPercentile', stackedPercentile.shape)
+
+        percentileDF = pd.DataFrame(stackedPercentile, index=[
+            'T' + str(i) for i in range(stackedPercentile.shape[0])],
             columns=[str(p) for p in percents])
         # print('percentileDF.head()', percentileDF.head())
         percentileDF['time'] = percentileDF.index
         percentileJson = loads(percentileDF.to_json(orient='records'))
-        # print('percentileJson', percentileJson)
 
         percentileSum = np.sum(percentileArr, axis=1)
         # print('percentileSum', percentileSum)
