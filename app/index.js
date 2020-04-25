@@ -137,7 +137,8 @@ class App extends Component {
     const attnFilename =
       // "checkpoint-20200409-061253-023Epoch-0.88_attentions_noa4vis.csv";
       // "checkpoint-20200409-061253-013Epoch-0.85_attentions_noa4vis.csv";
-      "checkpoint-20200409-061253-002Epoch-0.79_attentions_noa4vis.csv";
+      "checkpoint-20200409-061253-008Epoch-0.84_attentions_noa4vis.csv";
+    // "checkpoint-20200409-061253-002Epoch-0.79_attentions_noa4vis.csv";
     // "checkpoint-20200409-061253-000Epoch-0.61_attentions_noa4vis.csv";
     requestCSV(
       "../backend/data/oulad/vis_data/".concat(attnFilename),

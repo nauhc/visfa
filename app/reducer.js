@@ -80,19 +80,19 @@ const handleLoadSequence = (state, { payload }) => {
 const handleUpdateSelectedClass = (state, { payload }) => {
   return {
     ...state,
-    selectedClass: payload.map(o => o.x)
+    selectedClass: payload
   };
 };
 const handleUpdateSelectedEdu = (state, { payload }) => {
   return {
     ...state,
-    selectedEdu: payload.map(o => o.x)
+    selectedEdu: payload
   };
 };
 const handleUpdateSelectedGender = (state, { payload }) => {
   return {
     ...state,
-    selectedGender: payload.map(o => o.x)
+    selectedGender: payload
   };
 };
 // const handleUpdateSelectedFeatureIdx = (state, { payload }) => {

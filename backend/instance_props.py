@@ -262,7 +262,7 @@ def generatePropertyData(time, epoch, accuracy, instanceId, classId, gender, edu
 # epoch = 23
 # accuracy = 0.89
 
-time = '20200409-061253'
-epoch = 23
-accuracy = 0.88
+# time = '20200409-061253'
+# epoch = 23
+# accuracy = 0.88
 # generatePropertyData(time, epoch, accuracy)

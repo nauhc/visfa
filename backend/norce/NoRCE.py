@@ -223,13 +223,16 @@ class NoRCE:
         attns = arr[:, 0]
         dict = {}
         thresholds = []
-        for percentile in np.arange(0, 1.1, 0.1):
+        for percentile in np.arange(0, 101, 10):
             v = np.percentile(attns, percentile, interpolation='nearest')
             thresholds.append(v)
+            # print('percentile', percentile, 'threshold', v)
         for (i, thr) in enumerate(thresholds[:-1]):
+            # print(i, thr)
             idx = np.where((attns >= thr) & (attns < thresholds[i + 1]))[0]
             # set the attn on idx as original and set the rest as nan
             dict['%.1f' % (i * 0.1)] = idx.tolist()
+        # print('percentile dict', dict.keys())
         with open(fn, 'w') as fp:
             dump(dict, fp)
 

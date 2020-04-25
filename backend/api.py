@@ -25,11 +25,11 @@ time = '20200409-061253'
 # epoch = 13
 # accuracy = 0.85
 # #
-# epoch = 8
-# accuracy = 0.84
+epoch = 8
+accuracy = 0.84
 # #
-epoch = 2
-accuracy = 0.79
+# epoch = 2
+# accuracy = 0.79
 # #
 # epoch = 0
 # accuracy = 0.61
@@ -71,7 +71,8 @@ def norce():
     print('\n', d)
 
     featureIdx = d['selectedFeatureIdx']
-    attnRange = d['selectedAttnRange']
+    attnRange = [float(obj['x'].split('-')[0])
+                 for obj in d['selectedAttnRange']]
     attnPercentile = [
         float(obj['x']) / 100 for obj in d['selectedAttnPercentile']]
 
