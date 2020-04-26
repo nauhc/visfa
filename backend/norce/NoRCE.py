@@ -96,8 +96,7 @@ class NoRCE:
                 cluster.append(np.nan)
         return cluster
 
-
-def percentileVisData(self, cluster, percents, withNan):
+    def percentileVisData(self, cluster, percents, withNan):
         # percentile arr
         if withNan:
             tCnt = len(cluster)
@@ -110,12 +109,12 @@ def percentileVisData(self, cluster, percents, withNan):
                 [np.percentile(values, p, interpolation='nearest') for p in percents])
         percentileArr = np.around(np.array(percentileArr), 4)
         percentileArr = np.nan_to_num(percentileArr)
-        print('percentileArr', percentileArr.shape)
+        # print('percentileArr', percentileArr.shape)  # (180, 5)
 
         firstCol = percentileArr[:, 0].reshape(tCnt, 1)
         stackedPercentile = np.concatenate(
             (firstCol, np.diff(percentileArr, axis=1)), axis=1)
-        print('stackedPercentile', stackedPercentile.shape)
+        # print('stackedPercentile', stackedPercentile.shape)  # (180, 5)
 
         percentileDF = pd.DataFrame(stackedPercentile, index=[
             'T' + str(i) for i in range(stackedPercentile.shape[0])],
@@ -126,8 +125,8 @@ def percentileVisData(self, cluster, percents, withNan):
 
         percentileSum = np.sum(percentileArr, axis=1)
         # print('percentileSum', percentileSum)
-        min = np.nanmin(percentileSum)
-        max = np.nanmax(percentileSum)
+        min = np.nanmin(stackedPercentile)
+        max = np.nanmax(stackedPercentile)
 
         avrg = np.around(np.mean(percentileArr, axis=1), 4).tolist()
         avrgDict = {'name': 'mean'}
@@ -159,8 +158,9 @@ def percentileVisData(self, cluster, percents, withNan):
         clusters = Counter(memberships).most_common(K)
         # print('clusters', clusters)
 
-        percents = [0, 20, 40, 60, 80, 100]
+        # percents = [0, 20, 40, 60, 80, 100]
         # percents = [10, 20, 40, 60, 80, 90]
+        percents = [10, 30, 50, 70, 90]
         # percents = [10, 25, 40, 60, 75, 90]
         # percents = [15, 25, 40, 60, 75, 85]
 
