@@ -74,33 +74,55 @@ export default class InteractiveAreaChart extends PureComponent {
       return null;
     }
 
-    // const renderTooltipContent = o => {
-    //   const { payload, label } = o;
-    //   return (
-    //     <div
-    //       className="customized-tooltip-content"
-    //       style={{
-    //         margin: 0,
-    //         padding: 10,
-    //         paddingTop: 4,
-    //         paddingBottom: 4,
-    //         paddingLeft: 0,
-    //         display: "block",
-    //         whiteSpace: "nowrap",
-    //         background: "rgba(255, 255, 255, 0.5)"
-    //       }}
-    //     >
-    //       <ul className="list">
-    //         {payload.map((entry, index) => (
-    //           <li key={`item-${index}`} style={{ color: "#777" }}>
-    //             {`${entry.name}: ${entry.value}`}
-    //           </li>
-    //         ))}
-    //       </ul>
-    //     </div>
-    //   );
-    // };
+    const renderTooltipContent = o => {
+      const { payload, label } = o;
+      return (
+        <div
+          className="customized-tooltip-content"
+          style={{
+            margin: 0,
+            padding: 10,
+            paddingTop: 4,
+            paddingBottom: 4,
+            paddingLeft: 0,
+            display: "block",
+            whiteSpace: "nowrap",
+            background: "rgba(255, 255, 255, 0.5)"
+          }}
+        >
+          <ul className="list">
+            {payload.map((entry, index) => (
+              <li key={`item-${index}`} style={{ color: "#777" }}>
+                {`${entry.name}: ${entry.value}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    };
     // <Tooltip content={renderTooltipContent} />
+    // <Tooltip wrapperStyle={{ top: 20 }} /> // areachart
+
+    const percentileColors = arrInRange(
+      Math.ceil(areaChartAreaKeyList.length / 2)
+    ).map(i =>
+      interpolateHexColors(colors, (i / areaChartAreaKeyList.length) * 2 * 0.7)
+    ); // middle->two sides: dark -> light
+    let appliedPercentColorArr = [...percentileColors]
+      .reverse()
+      .concat(
+        percentileColors.slice(
+          areaChartAreaKeyList.length % 2 === 0 ? 0 : 1,
+          percentileColors.length
+        )
+      );
+
+    // let c = interpolateHexColors(colors, 0);
+    // if (i > 0)
+    //   c = interpolateHexColors(
+    //     colors,
+    //     1 - i / areaChartAreaKeyList.length
+    //   );
 
     return (
       <div
@@ -122,9 +144,14 @@ export default class InteractiveAreaChart extends PureComponent {
               height={height * 0.15}
               data={countBarChartData}
             >
-              <YAxis scale="log" domain={[0.1, "auto"]} allowDataOverflow />
+              <YAxis
+                scale="log"
+                domain={[0.1, countBarChartDataYMax]}
+                allowDecimals={false}
+                allowDataOverflow
+              />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <Tooltip />
+              <Tooltip content={renderTooltipContent} />
               <Bar dataKey={countBarChartDataYkey} fill={`${colors[0]}`} />
             </BarChart>
           </div>
@@ -138,24 +165,24 @@ export default class InteractiveAreaChart extends PureComponent {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey={areaChartXkey} />
-              <YAxis domain={[areaChartYMin, areaChartYMax]} />
-              <Tooltip wrapperStyle={{ top: 20 }} />
+              <YAxis
+                key={`${id}-areachart-yaxis`}
+                type="number"
+                domain={[areaChartYMin, areaChartYMax]}
+                allowDataOverflow
+              />
+              <Tooltip content={renderTooltipContent} />
               {arrInRange(areaChartAreaKeyList.length).map(i => {
-                let c = interpolateHexColors(colors, 0);
-                if (i > 0)
-                  c = interpolateHexColors(
-                    colors,
-                    1 - i / areaChartAreaKeyList.length
-                  );
                 return (
                   <Area
                     key={`area-${i}`}
-                    type="monotone"
+                    type="linear"
                     dataKey={areaChartAreaKeyList[i]}
                     stackId="1"
-                    stroke={`${colors[0]}`}
-                    fill={`${c}`}
+                    stroke={`${appliedPercentColorArr[i]}`}
+                    fill={`${appliedPercentColorArr[i]}`}
                     isAnimationActive={animation}
+                    animateNewValues={true}
                   />
                 );
               })}

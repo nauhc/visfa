@@ -34,8 +34,8 @@ const valuetext = value => {
   return `${value}`;
 };
 
-const valueToLabel = value => {
-  return Math.ceil(value / 100) * 100;
+const valueToLabel = (value, base) => {
+  return Math.ceil(value / base) * base;
 };
 
 const valueToLabelLog = value => {
@@ -67,27 +67,76 @@ class SequenceView extends React.Component {
       return null;
     }
 
+    // console.log("sequenceVisData.clusters", sequenceVisData.clusters);
+
     const posClusters = sequenceVisData.clusters.pos;
     const negClusters = sequenceVisData.clusters.neg;
     const estimatedClusterNumber = sequenceVisData.estimatedK;
     const clusterNumInData = negClusters.length;
 
     const areaKeyList = negClusters[0].percents;
+
     let areaChartMinMax = [];
     areaChartMinMax.push(posClusters.map(c => [c.min, c.max]));
     areaChartMinMax.push(negClusters.map(c => [c.min, c.max]));
+
+    // const areaChartClusterMinMaxs = arrInRange(clusterNumInData).map(
+    //   clusterId => {
+    //     var minMaxInCluster = [];
+    //     minMaxInCluster.push(areaChartMinMax[0][clusterId]); // class 0
+    //     minMaxInCluster.push(areaChartMinMax[1][clusterId]); // class 1
+    //     const flattenedMinMax = flattenDeep(minMaxInCluster);
+    //     return {
+    //       max: valueToLabel(Math.max(...flattenedMinMax), 10),
+    //       min: valueToLabel(Math.min(...flattenedMinMax), 10)
+    //     };
+    //   }
+    // );
+
     const areaChartClusterMinMaxs = arrInRange(clusterNumInData).map(
       clusterId => {
-        var minMaxInCluster = [];
-        minMaxInCluster.push(areaChartMinMax[0][clusterId]); // class 0
-        minMaxInCluster.push(areaChartMinMax[1][clusterId]); // class 1
-        const flattenedMinMax = flattenDeep(minMaxInCluster);
+        let minValue = Infinity;
+        let maxValue = -Infinity;
+        // const currPosClusterTimeFocus = posClusters[
+        //   clusterId
+        // ].percentiles.slice(timeFocus[0], timeFocus[1]);
+        // const currNegClusterTimeFocus = negClusters[
+        //   clusterId
+        // ].percentiles.slice(timeFocus[0], timeFocus[1]);
+
+        posClusters[clusterId].percentiles.forEach(t => {
+          areaKeyList.forEach(p => {
+            if (t[p] < minValue) {
+              minValue = t[p];
+            }
+            if (t[p] > maxValue) {
+              maxValue = t[p];
+            }
+          });
+        });
+        negClusters[clusterId].percentiles.forEach(t => {
+          areaKeyList.forEach(p => {
+            if (t[p] < minValue) {
+              minValue = t[p];
+            }
+            if (t[p] > maxValue) {
+              maxValue = t[p];
+            }
+          });
+        });
+
         return {
-          max: valueToLabel(Math.max(...flattenedMinMax)),
-          min: valueToLabel(Math.min(...flattenedMinMax))
+          max: valueToLabel(maxValue, 10),
+          min: valueToLabel(minValue, 10)
         };
       }
     );
+
+    const cntBarChartMax = arrInRange(clusterNumInData).map(clusterId => {
+      return posClusters[clusterId].tsMax >= negClusters[clusterId].tsMax
+        ? valueToLabel(posClusters[clusterId].tsMax, 10)
+        : valueToLabel(negClusters[clusterId].tsMax, 10);
+    });
 
     // <div className="time-focus-range-slider">
     //   <h4 className="time-focus-range-slider-text">Temporal Focus:</h4>
@@ -244,7 +293,7 @@ class SequenceView extends React.Component {
                     countBarChartData={negClusters[i].tsHist}
                     countBarChartDataXkey={"time"}
                     countBarChartDataYkey={"cnt"}
-                    countBarChartDataYMax={negClusters[i].tsCntMax}
+                    countBarChartDataYMax={cntBarChartMax[i]}
                     brushRange={timeFocus}
                     onChangeBrush={onTimeFocusChange}
                   />
@@ -272,7 +321,7 @@ class SequenceView extends React.Component {
                     countBarChartData={posClusters[i].tsHist}
                     countBarChartDataXkey={"time"}
                     countBarChartDataYkey={"cnt"}
-                    countBarChartDataYMax={posClusters[i].tsCntMax}
+                    countBarChartDataYMax={cntBarChartMax[i]}
                     brushRange={timeFocus}
                     onChangeBrush={onTimeFocusChange}
                   />
